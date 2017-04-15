@@ -21,6 +21,17 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+#define DIM 20
+
+struct person {
+    char *name;
+    char *surname;
+    char *ip;
+    char *number;
+};
+
+typedef struct person Person;
+
 int action;
 bool Done = false;
 
@@ -32,6 +43,8 @@ void *connection_handler1(void *socket_desc);
 void *connection_handler2(void *socket_desc);
 int create_tcp_socket();
 char *get_ip(char *host);
+int books(void);
+int books2(void);
 
 void iam()
 {
@@ -188,9 +201,11 @@ int thread2(void){
 
 int main(int argc, char **argv)
 {
-	Start:	
+	Start:
+		
+	
  	iam();
-	printf("\t\t\tDo you want to be:\n\t\t\t\t1.) Server\n\t\t\t\t2.) Client\n\t\t\t\t3.) Exit\t");
+	printf("\t\t\tWhat you want to do:\n\t\t\t\t1.) Server\n\t\t\t\t2.) Client\n\t\t\t\t3.) Addressbook Entry\n\t\t\t\t4.) Print Addressbook\n\t\t\t\t5.) Exit\t");
     scanf("%c",&action);
     
 	switch(action){
@@ -214,6 +229,15 @@ int main(int argc, char **argv)
 	  thread2();
         break;
     case'3':
+    	books();
+    	goto Start;
+    	break;
+    case'4':
+    	books2();
+    	goto Start;
+    	break;
+    case'5':
+    	printf("\n");
     	iam();
       return 0;
         break;
@@ -223,6 +247,71 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
+}
+
+int books(void) {
+		Person* person = calloc (DIM, sizeof(Person));
+		char* buffer = 0;
+
+		FILE *fp;
+		fp = fopen("test.book","a+");
+		if (!fp)
+		{
+			printf("Unable to open file!");
+			return 1;
+		}
+				
+		buffer = malloc ( 150 );
+		memset(buffer,0,150);
+    	printf("Insert name: ");
+    	getchar();
+    	person->name = getline2 ();
+    	printf("Insert surname: ");
+    	getchar();
+		person->surname = getline2();
+    	printf("Insert IP: ");
+    	getchar();
+		person->ip = getline2();
+    	printf("Insert phone number: ");
+    	getchar();
+		person->number = getline2();
+		snprintf( buffer, 150, "%s%s%s%s\n",person->name,person->surname,person->ip,person->number);
+		fputs(buffer,  fp);
+		free( buffer );
+		
+		fclose(fp);	    
+}
+int books2(void) {
+	    Person* person = calloc (DIM, sizeof(Person));
+        printf("\n\nPRINTING ADDRESS BOOK...\n\n");
+		FILE *fp;
+		const char s[3] = " ";
+		char line[200];
+    	char *token;
+		fp=fopen("test.book","r");
+		if (!fp)
+		{
+			printf("Unable to open file!");
+			return 1;
+		}
+		
+		for(int i=1; i <= DIM;i++){
+		
+			fgets(line, sizeof(line), fp);
+
+   			token = strtok(line, s);
+
+   /* walk through other tokens */
+   			while( token != NULL )
+   			{
+      			printf( "%s", token );
+
+      			token = strtok(NULL, s);
+   			}
+					
+    	}
+
+		fclose(fp);
 }
 
 void *connection_handler1(void *socket_desc){  
