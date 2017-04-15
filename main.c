@@ -33,6 +33,16 @@ void *connection_handler2(void *socket_desc);
 int create_tcp_socket();
 char *get_ip(char *host);
 
+void iam()
+{
+  	  printf("\t\t.------..------..------..------..------..------.\n");
+	  printf("\t\t|S.--. ||M.--. ||I.--. ||R.--. ||I.--. ||L.--. |\n");
+	  printf("\t\t| :  : || :  : || :  : || :  : || :  : || :  : |\n");
+	  printf("\t\t| '--' || '--' || '--' || '--TO|| '--OL|| '--'S|\n");
+	  printf("\t\t`------'`------'`------'`------'`------'`------'\n");
+	  printf("\t\t Peer-Chat OpenSSL (Windows/Linux)  Version 1.0 \n");
+}
+
 char * getline2(void) {
     char * line = malloc(100), * linep = line;
     size_t lenmax = 100, len = lenmax;
@@ -179,8 +189,8 @@ int thread2(void){
 int main(int argc, char **argv)
 {
 	Start:	
- 
-	printf("Do you want to be:\n1.) Server\n2.) Client\n3.) Exit\n");
+ 	iam();
+	printf("\t\t\tDo you want to be:\n\t\t\t\t1.) Server\n\t\t\t\t2.) Client\n\t\t\t\t3.) Exit\t");
     scanf("%c",&action);
     
 	switch(action){
@@ -204,6 +214,7 @@ int main(int argc, char **argv)
 	  thread2();
         break;
     case'3':
+    	iam();
       return 0;
         break;
 	default:
@@ -357,6 +368,7 @@ void *connection_handler1(void *socket_desc){
 #endif
 		SSL_free(ssl);
 		SSL_CTX_free(ctx);
+		iam();
 		
 	return 0;
 }
@@ -470,7 +482,8 @@ void *connection_handler2(void *socket_desc){
 #endif
 		SSL_free(ssl);
 		SSL_CTX_free(ctx);
-
+		iam();
+		
 	return 0;
 }
 
