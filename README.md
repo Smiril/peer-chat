@@ -7,13 +7,13 @@ On Windows: use DevC++ (latest)
 
 with linker options:
 
-#  -mwindows
-# -lssl
-# -lcrypto
-# -leay32 
-# -lwsock32
-# -lws2_32 
-# -lpthread
-# -s
+*  -mwindows
+* -lssl
+* -lcrypto
+* -leay32 
+* -lwsock32
+* -lws2_32 
+* -lpthread
+* -s
 
-# Code profiling -std ISO C99
+* Code profiling -std ISO C99
