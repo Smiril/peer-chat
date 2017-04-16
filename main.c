@@ -36,7 +36,7 @@ const char* Versionx() {
 #ifdef VERSION
   return VERSION;
 #else
-  return "";
+  return "Smiril-peer-chat . Wensday - The Enemy Dail";
 #endif
 }
 
