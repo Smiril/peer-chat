@@ -10,6 +10,7 @@
 * http/https Shellshock Browser (Windows/Linux)
 
     most Bug free
+    
     A Webbrowser that has a modyfied GET Request. It supports HTTP and HTTPS Connections.
     
     A useful Link:
