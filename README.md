@@ -44,6 +44,5 @@ Code profiling -std=ISO C99
 # make version
 
 
-** Tools **
 
-**[Description](tools/Readme.md)**
+**[Tools](tools/Readme.md)**
