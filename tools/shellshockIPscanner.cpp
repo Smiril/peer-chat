@@ -94,7 +94,7 @@ void iam()
 	printf("\t\t\t /\\_./o__    \n");
 	printf("\t\t\t(/^/(_^^'     \n");
 	printf("\t\t\t_.(_.)_       \n");  
-	printf("\t\t\tShellShockIPScanner Version 1.1\n");
+	printf("\t\t\tShellShockScanner Version 1.1\n");
 } 
 
 void usage()
@@ -121,7 +121,7 @@ char *build_get_query(const char *host, char *page)
   
   query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(USERAGENT)+strlen(TARGET)+strlen(tpl)-6);
   
-  sprintf(query, tpl, getpage, host, USERAGENT);
+  sprintf(query, tpl, getpage, host, USERAGENT, TARGET);
   
   return query;
 }
@@ -140,7 +140,7 @@ char *build_connect_query(const char *host, char *page)
   
   query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(TARGET)+strlen(USERAGENT)+strlen(TARGET)+strlen(tpl)-7);
   
-  sprintf(query, tpl, host, getpage, USERAGENT);
+  sprintf(query, tpl, host, getpage, TARGET, USERAGENT, TARGET);
   
   return query;
 }
@@ -605,7 +605,7 @@ int main(int argc, char **argv)
 	appli = argv[0];
 	if(argc == 1){
   		usage();
-    	exit(2);
+    	return 0;
   	}
 #ifdef __WIN32__
     SOCKET Sock;
@@ -617,7 +617,7 @@ int main(int argc, char **argv)
     {
         cout << "Winsock Initialization Failed!" << endl;
         WSACleanup();
-        return(0);
+        return 0;
     }
 #else
 	int Sock;
@@ -627,13 +627,13 @@ int main(int argc, char **argv)
     if (Sock == -1)
     {
         cout << "Bad Socket, Was Winsock Initialized?" << endl;
-        return(0);
+        return 0;
     }
 
     // Create Our Scan Job
     Scan_Job hScanJob;
     hScanJob.IPAddress      = argv[1];
-    hScanJob.totalThreads   = 30;
+    hScanJob.totalThreads   = 255;
     hScanJob.ptrIP          = &hScanJob.IPAddress;
     host = argv[1];
 	page = argv[2];
@@ -648,5 +648,5 @@ int main(int argc, char **argv)
     }
 
 //  Thread_Kill(T_SCAN); // Kill The Scan Thread
-    return(0);
+    return 0;
 }
