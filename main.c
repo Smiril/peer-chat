@@ -32,6 +32,14 @@ struct person {
 
 typedef struct person Person;
 
+const char* Versionx() {
+#ifdef VERSION
+  return VERSION;
+#else
+  return "";
+#endif
+}
+
 int action;
 bool Done = false;
 
@@ -56,6 +64,7 @@ void iam()
 	  printf("\t\t| '--' || '--' || '--' || '--TO|| '--OL|| '--'S|\n");
 	  printf("\t\t`------'`------'`------'`------'`------'`------'\n");
 	  printf("\t\t Peer-Chat OpenSSL (Windows/Linux)  Version 1.1 \n");
+	  printf("%s \n",Versionx());
 }
 
 char * getline2(void) {
