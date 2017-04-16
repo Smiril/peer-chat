@@ -55,7 +55,7 @@ void iam()
 	  printf("\t\t| :  : || :  : || :  : || :  : || :  : || :  : |\n");
 	  printf("\t\t| '--' || '--' || '--' || '--TO|| '--OL|| '--'S|\n");
 	  printf("\t\t`------'`------'`------'`------'`------'`------'\n");
-	  printf("\t\t Peer-Chat OpenSSL (Windows/Linux)  Version 1.0 \n");
+	  printf("\t\t Peer-Chat OpenSSL (Windows/Linux)  Version 1.1 \n");
 }
 
 char * getline2(void) {
