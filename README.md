@@ -16,4 +16,4 @@ with linker options:
 * -lpthread
 * -s
 
-* Code profiling -std ISO C99
+* Code profiling -std=ISO C99
