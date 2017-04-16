@@ -19,7 +19,7 @@
 
 
 # building
-* On Linux: make
+* On Linux: # make
 
 * On Windows: use DevC++ (latest) WIN32/WIN64 Compiler
 
@@ -36,11 +36,9 @@ with linker options:
 
 Code profiling -std=ISO C99
 
-# install
-* On Linux: sudo make install
-
-# uninstall
-* On Linux: sudo make uninstall
-
-# clean
-* On Linux: make clean
+**make commands**
+# make
+# sudo make install
+# sudo make uninstall
+# make clean
+# make version
