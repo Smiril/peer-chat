@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 	Start:
 
  	iam();
-	printf("\n\t\t\tWhat you want to do:\n\t\t\t1.) ChatServer\t\t6.) Shellshock Browser\n\t\t\t2.) ChatClient\n\t\t\t3.) Addressbook Entry\n\t\t\t4.) Print Addressbook\n\t\t\t5.) Exit\t\t");
+	printf("\n\t\t\tWhat you want to do:\n\t\t\t1.) ChatServer\t\t6.) Shellshock Browser\n\t\t\t2.) ChatClient\n\t\t\t\x1b[33m3.) Addressbook Entry\x1b[0m\n\t\t\t4.) Print Addressbook\n\t\t\t5.) Exit\t\t");
     scanf("%c",&action);
     
 	switch(action){
