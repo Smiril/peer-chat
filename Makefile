@@ -9,27 +9,27 @@ PREFIX := /bin
 CXX := gcc
 CX1 := i686-w64-mingw32-gcc
 CX2 := i686-darwin-mingw32-gcc
-CXXFLAGS := -lpthread -lcrypto -lssl -Wall -Wextra -pedantic \
+CXXFLAGS := -lpthread -lcrypto -lssl -std=gnu99 \
         -Wno-variadic-macros \
         -DVERSION="\"$(VERSION)\""
         
 .PHONY: all peer-chat debug-peer-chat install uninstall clean version
 
 all: peer-chat 
-peer-chat: main.c	
-	$(CXX) main.c $(CXXFLAGS) -o peer-chat
+peer-chat: sslchat.c
+        $(CXX) sslchat.c $(CXXFLAGS) -o peer-chat
 debug-peer-chat: CXXFLAGS += -g -DDEBUG
-debug-peer-chat: main.c
-	$(CXX) $(CXXFLAGS) main.c -o debug-peer-chat
+debug-peer-chat: sslchat.c
+        $(CXX) $(CXXFLAGS) sslchat.c -o debug-peer-chat
 version:
-	@echo $(VERSION)
+        @echo $(VERSION)
 
 install: peer-chat
-	mkdir -p $(PREFIX)
-	cp peer-chat $(PREFIX)
-	chmod +x $(PREFIX)/peer-chat
-	
+        mkdir -p $(PREFIX)
+        cp peer-chat $(PREFIX)
+        chmod +x $(PREFIX)/peer-chat
+
 uninstall: 
-	rm -rf $(PREFIX)/peer-chat
+        rm -rf $(PREFIX)/peer-chat
 clean: 
-	rm -rf peer-chat
+        rm -rf peer-chat
