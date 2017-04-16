@@ -33,7 +33,7 @@ Code profiling -std=ISO C99
 * On Linux: sudo make install
 
 # uninstall
-* On Linux: make uninstall
+* On Linux: sudo make uninstall
 
 # clean
 * On Linux: make clean
