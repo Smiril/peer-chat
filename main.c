@@ -36,7 +36,7 @@ const char* Versionx() {
 #ifdef VERSION
   return VERSION;
 #else
-  return "Smiril-peer-chat . Wensday - The Enemy Dail";
+  return "Smiril-peer-chat . \x1B[32mWensday\x1B[39m - \x1B[33mThe Enemy Dail\x1B[39m";
 #endif
 }
 
