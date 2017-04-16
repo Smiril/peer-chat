@@ -6,6 +6,7 @@
 #ifdef __WIN32__
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <windows.h>
 #else
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -71,6 +72,55 @@ typedef struct
 char *page,*host,*appli;
 vector<thread> quenceThreads;   // I Use this to push threads
 Single_Thread hThreads[256];
+
+int Modulus(int iN, int iMod) {
+	int iQ = (iN/iMod);
+	return iN - (iQ*iMod);
+}
+
+char GetChar(int iGenerator, char cBase, int iRange) {
+	return (cBase + Modulus(iGenerator, iRange));
+}
+
+int matrix() {
+	// Color code
+	HANDLE  hConsole;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, 2);
+
+	char caRow[80];
+	int j = 7;
+	int k = 2;
+	int l = 5;
+	int m = 1;
+	for (int ccc = 0;ccc <= 255;ccc++) {
+		// Output a random row of characters
+		for ( int i = 0; i < 80; ++i ) 
+		{
+			if (caRow[i] != ' ') {
+				caRow[i] = GetChar(j + i*i, 33, 30);
+				if (((i*i + k) % 71) == 0) {
+					SetConsoleTextAttribute(hConsole,  7);
+				} else {
+					SetConsoleTextAttribute(hConsole,  2);
+				}
+			}
+			std::cout << caRow[i];
+			SetConsoleTextAttribute(hConsole,  2);
+		}
+		j = (j + 31);
+		k = (k + 17);
+		l = (l + 47);
+		m = (m + 67);
+		caRow[Modulus(j, 80)] = '-';
+		caRow[Modulus(k, 80)] = ' ';
+		caRow[Modulus(l, 80)] = '-';
+		caRow[Modulus(m, 80)] = ' ';
+		// Delay
+		Sleep(10);
+	} //end while
+    return 0;
+}
 
 void logo(){
 	printf("\t\t\t\t     (\\               /)\n");
@@ -576,6 +626,7 @@ void Start_Scan(Scan_Job hScanJob)
     int rThreads = 0;
     printf("\x1b[32m");
 	logo();
+	matrix();
 	printf("\x1b[0m");
     // Check If We Are Already Scanning
     if (Thread_Check(T_SCAN))
