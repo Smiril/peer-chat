@@ -127,7 +127,7 @@ int mysqldb(const char *ip,int port,char *message)
     return 0;
 }
 
-int mysqlinp(const char *ip,int page,char *target)
+int mysqlinp(const char *ip,char *page,char *target)
 {
 	char buff[250];
 	mysqlconn1();
@@ -138,7 +138,7 @@ int mysqlinp(const char *ip,int page,char *target)
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-	snprintf(buff,250,"INSERT INTO INPUT (IP, PAGE, TARGET, SEEN) values ('%s', '%d', '%s', now());",ip,page,target);
+	snprintf(buff,250,"INSERT INTO INPUT (IP, PAGE, TARGET, SEEN) values ('%s', '%s', '%s', now());",ip,page,target);
 	if (mysql_query(sock, buff))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
@@ -812,7 +812,7 @@ int main(int argc, char **argv)
     hScanJob.totalThreads   = 255;
     hScanJob.ptrIP          = &hScanJob.IPAddress;
     
-	mysqlinp(host,atoi(page),target);
+	mysqlinp(host,page,target);
 	
     // Launch The Scan Thread
     thread tScanThread(Start_Scan, hScanJob);
