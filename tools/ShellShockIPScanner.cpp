@@ -29,6 +29,7 @@
     char *mysqluser = "root";
     char *mysqlpass = "password";
     char *mysqldb1 = "test";
+    int mysqlport = 3306;
 // Mysql Details end
 
 // USERAGENT Fakeing
@@ -93,7 +94,7 @@ int mysqldb(const char *ip,int port,char *message)
     }
 
     //connection
-    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, 0, NULL, 0))
+    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, mysqlport, NULL, 0))
          cout << "mysql connection ok!" << endl;
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
@@ -132,7 +133,7 @@ int mysqllog(const char *ip,int port,char *message)
     }
 
     //connection
-    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, 0, NULL, 0))
+    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, mysqlport, NULL, 0))
          cout << "mysql connection ok!" << endl;
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
@@ -171,7 +172,7 @@ int mysqlerr(const char *ip,int port,char *message)
     }
 
     //connection
-    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, 0, NULL, 0))
+    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, mysqlport, NULL, 0))
          cout << "mysql connection ok!" << endl;
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
