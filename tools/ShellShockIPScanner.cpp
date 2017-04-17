@@ -22,6 +22,7 @@
 #include <mutex>
 #include <mysql/mysql.h>
 
+
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "pthread.lib")
 #pragma comment(lib, "libmysql.lib")
@@ -30,17 +31,19 @@
 #pragma comment(lib, "pthread.a")
 #pragma comment(lib, "libmysql.a")
 
-// Mysql Details
-    char *mysqlhost = "localhost";
-    char *mysqluser = "root";
-    char *mysqlpass = "password";
-    char *mysqldb1 = "test";
-    int mysqlport = 3306;
-// Mysql Details end
-
 // USERAGENT Fakeing
 #define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
 // end USERAGENT Fakeing
+
+// Mysql Details begin
+char *mysqlhost = "localhost";
+char *mysqluser = "root";
+char *mysqlpass = "password";
+char *mysqldb1 = "test";
+int mysqlport = 3306;
+//sock
+MYSQL *sock;
+// Mysql Details end
 
 typedef void *PVOID;
 typedef void *HANDLE;
@@ -50,6 +53,7 @@ typedef void *LPTHREAD_START_ROUTINE;
 typedef void *LPVOID;
 typedef void *DWORD;
 #endif
+
 using namespace std;
 
 enum Thread_Type
@@ -87,12 +91,7 @@ char *page,*host,*appli, *target;
 vector<thread> quenceThreads;   // I Use this to push threads
 Single_Thread hThreads[256];
 
-int mysqldb(const char *ip,int port,char *message)
-{
-	char buff[250];
-
-    //sock
-    MYSQL *sock;
+int mysqlconn1(void){
     sock = mysql_init(0);
     if (sock) cout << "mysql sock handle ok!" << endl;
     else {
@@ -105,7 +104,12 @@ int mysqldb(const char *ip,int port,char *message)
     else {
          cout << "mysql connection fail: " << mysql_error(sock) << endl;
     }
+}
 
+int mysqldb(const char *ip,int port,char *message)
+{
+	char buff[250];
+	mysqlconn1();
     //wait for posibility to check system/mysql sockets
     //system("PAUSE");
     // send the query to the database
@@ -113,38 +117,41 @@ int mysqldb(const char *ip,int port,char *message)
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-	
 	snprintf(buff,250,"INSERT INTO SCANNER (IP, PORT, MESSAGE, SEEN) values ('%s', '%d', '%s', now());",ip,port,message);
 	if (mysql_query(sock, buff))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-
     //closing connection
     mysql_close(sock);
+    return 0;
+}
 
+int mysqlinp(const char *ip,int page,char *target)
+{
+	char buff[250];
+	mysqlconn1();
+    //wait for posibility to check system/mysql sockets
+    //system("PAUSE");
+    // send the query to the database
+	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS INPUT (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PAGE varchar(255) NOT NULL ,TARGET varchar(255) NOT NULL ,SEEN varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+	snprintf(buff,250,"INSERT INTO INPUT (IP, PAGE, TARGET, SEEN) values ('%s', '%d', '%s', now());",ip,page,target);
+	if (mysql_query(sock, buff))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+    //closing connection
+    mysql_close(sock);
     return 0;
 }
 
 int mysqllog(const char *ip,int port,char *message)
 {
 	char buff[250];
-
-    //sock
-    MYSQL *sock;
-    sock = mysql_init(0);
-    if (sock) cout << "mysql sock handle ok!" << endl;
-    else {
-         cout << "mysql sock handle failed!" << mysql_error(sock) << endl;
-    }
-
-    //connection
-    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, mysqlport, NULL, 0))
-         cout << "mysql connection ok!" << endl;
-    else {
-         cout << "mysql connection fail: " << mysql_error(sock) << endl;
-    }
-
+    mysqlconn1();
     //wait for posibility to check system/mysql sockets
     //system("PAUSE");
     // send the query to the database
@@ -152,38 +159,20 @@ int mysqllog(const char *ip,int port,char *message)
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-	
 	snprintf(buff,250,"INSERT INTO PORTOPEN (IP, PORT, MESSAGE, SEEN) values ('%s', '%d', '%s', now());",ip,port,message);
 	if (mysql_query(sock, buff))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-
     //closing connection
     mysql_close(sock);
-
     return 0;
 }
 
 int mysqlerr(const char *ip,int port,char *message)
 {
 	char buff[250];
-
-    //sock
-    MYSQL *sock;
-    sock = mysql_init(0);
-    if (sock) cout << "mysql sock handle ok!" << endl;
-    else {
-         cout << "mysql sock handle failed!" << mysql_error(sock) << endl;
-    }
-
-    //connection
-    if (mysql_real_connect(sock, mysqlhost, mysqluser, mysqlpass, mysqldb1, mysqlport, NULL, 0))
-         cout << "mysql connection ok!" << endl;
-    else {
-         cout << "mysql connection fail: " << mysql_error(sock) << endl;
-    }
-
+    mysqlconn1();
     //wait for posibility to check system/mysql sockets
     //system("PAUSE");
     // send the query to the database
@@ -191,16 +180,13 @@ int mysqlerr(const char *ip,int port,char *message)
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-	
 	snprintf(buff,250,"INSERT INTO ERRORID (IP, PORT, MESSAGE, SEEN) values ('%s', '%d', '%s', now());",ip,port,message);
 	if (mysql_query(sock, buff))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
-
     //closing connection
     mysql_close(sock);
-
     return 0;
 }
 
@@ -791,6 +777,11 @@ int main(int argc, char **argv)
   		usage();
     	return 0;
   	}
+	
+	host = argv[1];
+	page = argv[2];
+	target = argv[3];
+
 #ifdef __WIN32__
     SOCKET Sock;
     WSADATA WsaDat;
@@ -806,6 +797,7 @@ int main(int argc, char **argv)
 #else
 	int Sock;
 #endif
+
     // Define Socket
     Sock = socket(AF_INET, SOCK_STREAM, 0);
     if (Sock == -1)
@@ -819,10 +811,9 @@ int main(int argc, char **argv)
     hScanJob.IPAddress      = argv[1];
     hScanJob.totalThreads   = 255;
     hScanJob.ptrIP          = &hScanJob.IPAddress;
-    host = argv[1];
-	page = argv[2];
-	target = argv[3];
-
+    
+	mysqlinp(host,atoi(page),target);
+	
     // Launch The Scan Thread
     thread tScanThread(Start_Scan, hScanJob);
 
