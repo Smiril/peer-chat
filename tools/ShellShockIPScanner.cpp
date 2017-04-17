@@ -777,7 +777,7 @@ void Start_Scan(Scan_Job hScanJob)
 int main(int argc, char **argv)
 {
 	appli = argv[0];
-	if(argc == 1){
+	if(argc < 4){
   		usage();
     	return 0;
   	}
