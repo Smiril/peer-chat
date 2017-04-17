@@ -23,12 +23,12 @@
 #include <mysql/mysql.h>
 
 #pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "libmysql.lib")
 #pragma comment(lib, "pthread.lib")
+#pragma comment(lib, "libmysql.lib")
 
 #pragma comment(lib, "ws2_32.a")
-#pragma comment(lib, "libmysql.a")
 #pragma comment(lib, "pthread.a")
+#pragma comment(lib, "libmysql.a")
 
 // Mysql Details
     char *mysqlhost = "localhost";
