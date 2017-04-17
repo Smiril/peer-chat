@@ -6,7 +6,6 @@
 #ifdef __WIN32__
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <windows.h>
 #else
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -18,7 +17,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-
+#include <mysql/mysql.h>
 #pragma comment(lib, "ws2_32.lib")
 
 // Target for Proxy checking
@@ -73,6 +72,94 @@ char *page,*host,*appli;
 vector<thread> quenceThreads;   // I Use this to push threads
 Single_Thread hThreads[256];
 
+int mysqldb(const char *ip,int port,char *message)
+{
+	char buff[250];
+    //connection params
+    char *host = 	"localhost";
+    char *user = 	"root";
+    char *pass = 	"password";
+    char *db = 		"test";
+
+    //sock
+    MYSQL *sock;
+    sock = mysql_init(0);
+    if (sock) cout << "mysql sock handle ok!" << endl;
+    else {
+         cout << "mysql sock handle failed!" << mysql_error(sock) << endl;
+    }
+
+    //connection
+    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
+         cout << "mysql connection ok!" << endl;
+    else {
+         cout << "mysql connection fail: " << mysql_error(sock) << endl;
+    }
+
+    //wait for posibility to check system/mysql sockets
+    //system("PAUSE");
+    // send the query to the database
+	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS SCANNER (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+	
+	snprintf(buff,250,"INSERT INTO SCANNER (IP, PORT, MESSAGE) values ('%s', '%d', '%s');",ip,port,message);
+	if (mysql_query(sock, buff))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+
+    //closing connection
+    mysql_close(sock);
+
+    return 0;
+}
+
+int mysqllog(const char *ip,int port,char *message)
+{
+	char buff[250];
+    //connection params
+    char *host = 	"localhost";
+    char *user = 	"root";
+    char *pass = 	"password";
+    char *db = 		"test";
+
+    //sock
+    MYSQL *sock;
+    sock = mysql_init(0);
+    if (sock) cout << "mysql sock handle ok!" << endl;
+    else {
+         cout << "mysql sock handle failed!" << mysql_error(sock) << endl;
+    }
+
+    //connection
+    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
+         cout << "mysql connection ok!" << endl;
+    else {
+         cout << "mysql connection fail: " << mysql_error(sock) << endl;
+    }
+
+    //wait for posibility to check system/mysql sockets
+    //system("PAUSE");
+    // send the query to the database
+	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS PORTOPEN (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+	
+	snprintf(buff,250,"INSERT INTO PORTOPEN (IP, PORT, MESSAGE) values ('%s', '%d', '%s');",ip,port,message);
+	if (mysql_query(sock, buff))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+
+    //closing connection
+    mysql_close(sock);
+
+    return 0;
+}
+
 int Modulus(int iN, int iMod) {
 	int iQ = (iN/iMod);
 	return iN - (iQ*iMod);
@@ -83,11 +170,6 @@ char GetChar(int iGenerator, char cBase, int iRange) {
 }
 
 int matrix() {
-	// Color code
-	HANDLE  hConsole;
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 2);
-
 	char caRow[80];
 	int j = 7;
 	int k = 2;
@@ -100,13 +182,13 @@ int matrix() {
 			if (caRow[i] != ' ') {
 				caRow[i] = GetChar(j + i*i, 33, 30);
 				if (((i*i + k) % 71) == 0) {
-					SetConsoleTextAttribute(hConsole,  7);
+					;
 				} else {
-					SetConsoleTextAttribute(hConsole,  2);
+					;
 				}
 			}
 			std::cout << caRow[i];
-			SetConsoleTextAttribute(hConsole,  2);
+			;
 		}
 		j = (j + 31);
 		k = (k + 17);
@@ -118,7 +200,7 @@ int matrix() {
 		caRow[Modulus(m, 80)] = ' ';
 		// Delay
 		Sleep(10);
-	} //end while
+	} //end for
     return 0;
 }
 
@@ -282,8 +364,9 @@ void Generic_Recv_Proxy_Banner_Grabber(Scan_Job sJob)
 			if(tmpres < 0){
 				perror("error reciving data");
 			}
-		}    
+		}   mysqldb(sJob.IPAddress.c_str(),sJob.port,"Proxy"); 
 	}
+	
 #ifdef __WIN32__
     closesocket(Sock);
 #else
@@ -377,8 +460,9 @@ void Generic_Recv_Banner_Grabber(Scan_Job sJob)
 			if(tmpres < 0){
 				perror("error reciving data");
 			}
-		}    
+		}   mysqldb(sJob.IPAddress.c_str(),sJob.port,"FTP or Webserver"); 
 	}
+	
 #ifdef __WIN32__
     closesocket(Sock);
 #else
@@ -567,9 +651,10 @@ DWORD WINAPI Scan_Thread(LPVOID passedParams)
     Port_Struct hPorts[] =
     {
         { 21,   false,  Generic_Recv_Banner_Grabber },
+        { 2121,   false,  Generic_Recv_Banner_Grabber },
         { 80,   false,  Generic_Recv_Banner_Grabber },
         { 81,   false,  Generic_Recv_Banner_Grabber },
-        { 443,   false,  Generic_Recv_Banner_Grabber },
+        { 443,   false,  Generic_Recv_Proxy_Banner_Grabber },
         { 3128,   false,  Generic_Recv_Proxy_Banner_Grabber },
         { 8080,   false,  Generic_Recv_Proxy_Banner_Grabber },
         { 8081,   false,  Generic_Recv_Proxy_Banner_Grabber },
@@ -607,6 +692,7 @@ DWORD WINAPI Scan_Thread(LPVOID passedParams)
             {
                 m.lock();
                     cout << "Port Open: " << inet_ntoa(hInetAddress) << ":" << hPorts[i].port << endl;
+                    mysqllog(inet_ntoa(hInetAddress),hPorts[i].port,"Port Open"); 
                     hExpScanJob.IPAddress = *hScanJob.ptrIP;
                     hExpScanJob.port = hPorts[i].port;
 
@@ -628,6 +714,7 @@ void Start_Scan(Scan_Job hScanJob)
 	logo();
 	matrix();
 	printf("\x1b[0m");
+	
     // Check If We Are Already Scanning
     if (Thread_Check(T_SCAN))
     {
