@@ -1,5 +1,8 @@
-//Source from https://codereview.stackexchange.com/questions/102556/ip-range-port-scanner
-//#define _WINSOCK_DEPRECATED_NO_WARNINGS
+//Original Source from https://codereview.stackexchange.com/questions/102556/ip-range-port-scanner
+//################################################################################################
+//#		AUTHOR: Smiril		WWW: https://smiril.github.io/peer-chat/tools/		DATE:2017.04.17  #
+//################################################################################################
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
