@@ -99,12 +99,12 @@ int mysqldb(const char *ip,int port,char *message)
     //wait for posibility to check system/mysql sockets
     //system("PAUSE");
     // send the query to the database
-	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS SCANNER (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
+	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS SCANNER (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,SEEN varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
 	
-	snprintf(buff,250,"INSERT INTO SCANNER (IP, PORT, MESSAGE) values ('%s', '%d', '%s');",ip,port,message);
+	snprintf(buff,250,"INSERT INTO SCANNER (IP, PORT, MESSAGE, SEEN) values ('%s', '%d', '%s', now());",ip,port,message);
 	if (mysql_query(sock, buff))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
@@ -143,12 +143,56 @@ int mysqllog(const char *ip,int port,char *message)
     //wait for posibility to check system/mysql sockets
     //system("PAUSE");
     // send the query to the database
-	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS PORTOPEN (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
+	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS PORTOPEN (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,SEEN varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
    	}
 	
-	snprintf(buff,250,"INSERT INTO PORTOPEN (IP, PORT, MESSAGE) values ('%s', '%d', '%s');",ip,port,message);
+	snprintf(buff,250,"INSERT INTO PORTOPEN (IP, PORT, MESSAGE, SEEN) values ('%s', '%d', '%s', now());",ip,port,message);
+	if (mysql_query(sock, buff))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+
+    //closing connection
+    mysql_close(sock);
+
+    return 0;
+}
+
+int mysqlerr(const char *ip,int port,char *message)
+{
+	char buff[250];
+    //connection params
+    char *host = 	"localhost";
+    char *user = 	"root";
+    char *pass = 	"password";
+    char *db = 		"test";
+
+    //sock
+    MYSQL *sock;
+    sock = mysql_init(0);
+    if (sock) cout << "mysql sock handle ok!" << endl;
+    else {
+         cout << "mysql sock handle failed!" << mysql_error(sock) << endl;
+    }
+
+    //connection
+    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
+         cout << "mysql connection ok!" << endl;
+    else {
+         cout << "mysql connection fail: " << mysql_error(sock) << endl;
+    }
+
+    //wait for posibility to check system/mysql sockets
+    //system("PAUSE");
+    // send the query to the database
+	if (mysql_query(sock, "CREATE TABLE IF NOT EXISTS ERRORID (ID int(11) unsigned NOT NULL auto_increment,IP varchar(255) NOT NULL ,PORT varchar(255) NOT NULL ,MESSAGE varchar(255) NOT NULL ,SEEN varchar(255) NOT NULL ,PRIMARY KEY  (ID));"))
+   	{
+      printf("mysql query error : %s\n", mysql_error(sock));
+   	}
+	
+	snprintf(buff,250,"INSERT INTO ERRORID (IP, PORT, MESSAGE, SEEN) values ('%s', '%d', '%s', now());",ip,port,message);
 	if (mysql_query(sock, buff))
    	{
       printf("mysql query error : %s\n", mysql_error(sock));
@@ -313,6 +357,7 @@ void Generic_Recv_Proxy_Banner_Grabber(Scan_Job sJob)
     if (connect(Sock, (sockaddr*)(&sockAddr), sizeof(sockAddr)) != 0)
     {
         cout << "Recieved Socket Error While Attempting To Connect To " << sJob.IPAddress << ":" << sJob.port << endl;
+        mysqlerr(sJob.IPAddress.c_str(),sJob.port,"Recieved Socket Error");
     }
     else
     {
@@ -364,7 +409,7 @@ void Generic_Recv_Proxy_Banner_Grabber(Scan_Job sJob)
 			if(tmpres < 0){
 				perror("error reciving data");
 			}
-		}   mysqldb(sJob.IPAddress.c_str(),sJob.port,"Proxy"); 
+		}   mysqldb(sJob.IPAddress.c_str(),sJob.port,recvBuf); 
 	}
 	
 #ifdef __WIN32__
@@ -460,7 +505,7 @@ void Generic_Recv_Banner_Grabber(Scan_Job sJob)
 			if(tmpres < 0){
 				perror("error reciving data");
 			}
-		}   mysqldb(sJob.IPAddress.c_str(),sJob.port,"FTP or Webserver"); 
+		}   mysqldb(sJob.IPAddress.c_str(),sJob.port,recvBuf); 
 	}
 	
 #ifdef __WIN32__
@@ -654,7 +699,7 @@ DWORD WINAPI Scan_Thread(LPVOID passedParams)
         { 2121,   false,  Generic_Recv_Banner_Grabber },
         { 80,   false,  Generic_Recv_Banner_Grabber },
         { 81,   false,  Generic_Recv_Banner_Grabber },
-        { 443,   false,  Generic_Recv_Proxy_Banner_Grabber },
+        { 443,   false,  Generic_Recv_Banner_Grabber },
         { 3128,   false,  Generic_Recv_Proxy_Banner_Grabber },
         { 8080,   false,  Generic_Recv_Proxy_Banner_Grabber },
         { 8081,   false,  Generic_Recv_Proxy_Banner_Grabber },
