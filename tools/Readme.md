@@ -2,7 +2,7 @@
 
 # Tools
 
-Use the nmap NSE Script for Dedection weak Hosts **[Script-Download](https://svn.nmap.org/nmap/scripts/http-shellshock.nse)**
+Use the nmap NSE Script for Dedection weak Hosts **[Script](https://svn.nmap.org/nmap/scripts/http-shellshock.nse)**
 
 * **[ShellShockIPScanner.cpp](ShellShockIPScanner.cpp)** **[ScreenShot](ShellShockIPScanner.png)**
 
