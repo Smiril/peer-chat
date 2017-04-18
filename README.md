@@ -1,3 +1,5 @@
+**[peer-chat](Readme.md)** **[Tools](tools/Readme.md)**
+
 # peer-chat
 * Server and Client OpenSSL Peer Socket Chat (Windows/Linux)
 
@@ -42,7 +44,3 @@ Code profiling -std=ISO C99
 # sudo make uninstall
 # make clean
 # make version
-
-
-
-**[Tools](tools/Readme.md)**
