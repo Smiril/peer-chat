@@ -1,4 +1,4 @@
-**[peer-chat](../Readme.md)** **[Tools](Readme.md)**
+**[peer-chat](../)** **[Tools](Readme.md)**
 
 # Tools
 
