@@ -371,7 +371,7 @@ void usage()
 	iam();
   fprintf(stderr, "\n\x1b[33m\tUSAGE: %s HOST PAGE PORT SERVICE TARGET\n\n\
 \t\t\x1b[31m exploiting shellshock CVE-2014-6271... \n\n\
-\tHOST: the website hostname. ex: coding.debuntu.org\n\
+\tHOST: the website hostname. ex: smiril.github.io/peer-chat/tools/ \n\
 \tPAGE: the page to retrieve. ex: cgi-bin/index.cgi, default: /\n\
 \tPORT: 80 , 443 \n\
 \tSERVICE: http , https \n\
