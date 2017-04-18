@@ -30,7 +30,6 @@ with linker options:
 -lssl
 -lcrypto
 -leay32 
--lwsock32
 -lws2_32 
 -lpthread
 -s
