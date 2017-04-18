@@ -5,6 +5,6 @@
 A Windows C++ IP Scanner and ShellShock Transmitter with MYSQL backlog Support.
 
 
-* **[ShellShockBrowser.cpp](ShellShockBrowser.c)** 
+* **[ShellShockBrowser.c](ShellShockBrowser.c)** 
 
 A Windows/Linux C SOcket ShellShock WebBrowser.
