@@ -29,11 +29,11 @@ char *build_get_query(char *host, char *page);
 void iam();
 void usage();
 
-#define HOST "coding.debuntu.org"
+#define HOST "smiril.github.io"
 #define PAGE "index.cgi"
 #define PORT "80"
 #define SERVICE "http"
-#define TARGET "coding.debuntu.net"
+#define TARGET "target.github.io"
 #define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
 
 #define HOME "/home/core/"
@@ -373,7 +373,7 @@ void usage()
 	iam();
   fprintf(stderr, "\n\x1b[33m\tUSAGE: %s HOST PAGE PORT SERVICE TARGET\n\n\
 \t\t\x1b[31m exploiting shellshock CVE-2014-6271... \n\n\
-\tHOST: the website hostname. ex: smiril.github.io/peer-chat/tools/ \n\
+\tHOST: the website hostname. ex: smiril.github.io \n\
 \tPAGE: the page to retrieve. ex: cgi-bin/bin, default: /\n\
 \tPORT: 80 , 443 \n\
 \tSERVICE: http , https \n\
