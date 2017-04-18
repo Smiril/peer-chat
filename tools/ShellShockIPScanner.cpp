@@ -32,9 +32,9 @@
 // end USERAGENT Fake
 
 // Mysql Details begin
-char *mysqlhost = "84.113.20.105";
+char *mysqlhost = "localhost";
 char *mysqluser = "root";
-char *mysqlpass = "planquard4";
+char *mysqlpass = "password";
 char *mysqldb1 = "test";
 int mysqlport = 3306;
 //sock
