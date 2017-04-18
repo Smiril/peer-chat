@@ -111,7 +111,8 @@ struct sockaddr_in *remote;
 int tmpres;
 char *ip;
 char *get;
-char buf[BUFSIZ+1];
+#define CORE 4096
+char buf[CORE+1];
 char *host;
 char *page;
 char *port;
@@ -275,7 +276,7 @@ void *connection_handler(void *socket_desc){
     	sent += tmpres;
   	}
   }
-  perror("\x1B[32msend query\x1b[0m");
+  perror("\x1B[32mSend Query\x1b[0m");
   //now it is time to receive the page
   memset(buf, 0, sizeof(buf));
   int htmlstart = 0;
@@ -284,7 +285,7 @@ void *connection_handler(void *socket_desc){
 
 
 	if(service == "https"){
-		while((tmpres = SSL_read(ssl,buf,BUFSIZ)) > 0){
+		while((tmpres = SSL_read(ssl,buf,CORE)) > 0){
 			if(htmlstart == 0){
 				htmlcontent = strstr(buf,"\r\n\r\n");
 				htmlstart = 1;
@@ -293,7 +294,7 @@ void *connection_handler(void *socket_desc){
 				htmlcontent = buf;
 			}
 			
-			if(htmlstart){
+			if(htmlcontent != NULL){
 				fprintf(stdout,htmlcontent);
 			}
 			
@@ -306,7 +307,7 @@ void *connection_handler(void *socket_desc){
 	}
 	
 	if(service == "http"){
-		while((tmpres = recv(sock2,buf,BUFSIZ,0)) < 0){
+		while((tmpres = recv(sock2,buf,CORE,0)) < 0){
 			if(htmlstart == 0){
 				htmlcontent = strstr(buf,"\r\n");
 				
@@ -317,7 +318,7 @@ void *connection_handler(void *socket_desc){
 					htmlcontent = buf;
 				}
 				
-				if(htmlstart){
+				if(htmlcontent != NULL){
 					fprintf(stdout,htmlcontent);
 				}
 				
