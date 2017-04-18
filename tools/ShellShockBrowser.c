@@ -217,6 +217,16 @@ void *connection_handler(void *socket_desc){
     exit(1);
   }
   remote->sin_port = htons(atoi(port));
+
+    struct timeval timeout;      
+    timeout.tv_sec = 120;
+    timeout.tv_usec = 0;  
+
+    if (setsockopt (sock2, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
+        perror("setsockopt failed\n");}
+
+    if (setsockopt (sock2, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
+        perror("setsockopt failed\n");}
  
   if(connect(sock2, (struct sockaddr *)remote, sizeof(struct sockaddr)) < 0){
     perror("Could not connect");
@@ -248,7 +258,7 @@ void *connection_handler(void *socket_desc){
   while(sent < strlen(get)){
   	tmpres = SSL_write(ssl,get+sent,strlen(get)-sent);
   	if(tmpres == -1){
-  		perror("can not send query");
+  		perror("\x1b[31mCan't send query\x1b[0m");
   		exit(1);
 	  }
   	}
@@ -259,26 +269,19 @@ void *connection_handler(void *socket_desc){
   {
     tmpres = send(sock2, get+sent, strlen(get)-sent, 0);
     if(tmpres == -1){
-      	perror("Can't send query");
+      	perror("\x1b[31mCan't send query\x1b[0m");
       	exit(1);
-    	}
+    }	
     	sent += tmpres;
   	}
   }
-  
+  perror("\x1B[32msend query\x1b[0m");
   //now it is time to receive the page
   memset(buf, 0, sizeof(buf));
   int htmlstart = 0;
   char * htmlcontent;
-    struct timeval timeout;      
-    timeout.tv_sec = 120;
-    timeout.tv_usec = 0;
 
-    if (setsockopt (sock2, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
-        perror("setsockopt failed\n");}
 
-    if (setsockopt (sock2, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
-        perror("setsockopt failed\n");}
 
 	if(service == "https"){
 		while((tmpres = SSL_read(ssl,buf,BUFSIZ)) > 0){
