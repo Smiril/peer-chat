@@ -14,7 +14,7 @@ host_fx="${4}"
 mysqlport="${5}"
 
 # Assign local user for www presentation scan results
-localuser="user"
+localuser="core"
 report=`mktemp /home/${localuser}/public_html/report_${NOW}_XXXXXX`
 
 echo "Downloading plugin!"
@@ -39,7 +39,7 @@ echo "Done cleaning!"
 echo ""
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP21=$($(command -v mysql) -u${username} -p${password} -D${database} -h${host_fx} -P${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '21' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
+IP21=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '21' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
 file1=`mktemp /home/${localuser}/Downloads/log/21.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP21} | tr " " "\n")
@@ -50,7 +50,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP443=$($(command -v mysql) -u${username} -p${password} -D${database} -h${host_fx} -P${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '443' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
+IP443=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '443' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
 file2=`mktemp /home/${localuser}/Downloads/log/443.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP443} | tr " " "\n")
@@ -61,7 +61,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP3128=$($(command -v mysql) -u${username} -p${password} -D${database} -h${host_fx} -P${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '3128' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
+IP3128=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '3128' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
 file2=`mktemp /home/${localuser}/Downloads/log/3128.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP3128} | tr " " "\n")
@@ -72,7 +72,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP8080=$($(command -v mysql) -u${username} -p${password} -D${database} -h${host_fx} -P${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8080' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
+IP8080=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8080' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
 file3=`mktemp /home/${localuser}/Downloads/log/8080.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP8080} | tr " " "\n")
@@ -83,7 +83,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP8081=$($(command -v mysql) -u${username} -p${password} -D${database} -h${host_fx} -P${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8081' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
+IP8081=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8081' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
 file4=`mktemp /home/${localuser}/Downloads/log/8081.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP8081} | tr " " "\n")
@@ -110,5 +110,7 @@ echo "Report: $report"
 echo ""
 
 $(command -v rm) -rf ./http-shellshock.nse
+
+exit 0
 
 exit 0
