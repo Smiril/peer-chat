@@ -381,9 +381,9 @@ void usage()
 \t\t\x1b[31m exploiting shellshock CVE-2014-6271... \n\n\
 \tHOST: the website hostname. ex: smiril.github.io \n\
 \tPAGE: the page to retrieve. ex: cgi-bin/bin, default: /\n\
-\tPORT: 80 , 443 \n\
-\tSERVICE: http , https \n\
-\tTARGET: the target hostname \n\n\x1b[0m",appli);
+\tPORT: the service port. ex: 80 , 443 \n\
+\tSERVICE: the service mode. ex: http , https \n\
+\tTARGET: the target hostname. ex: target.github.io \n\n\x1b[0m",appli);
 	iam();
 }
  
@@ -449,3 +449,4 @@ char *build_get_query(char *host, char *page)
   
   return query;
 }
+
