@@ -14,7 +14,7 @@ host_fx="${4}"
 mysqlport="${5}"
 
 # Assign local user for www presentation scan results
-localuser="core"
+localuser="user"
 report=`mktemp /home/${localuser}/public_html/report_${NOW}_XXXXXX`
 
 echo "Downloading plugin!"
