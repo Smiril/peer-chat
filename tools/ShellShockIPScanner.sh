@@ -62,7 +62,7 @@ done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
 IP3128=$($(command -v mysql) -u${username} -p${password} -D${database} -h${host_fx} -P${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '3128' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
-file2=`mktemp /home/${localuser}/Downloads/log/443.log_XXXXXX`
+file2=`mktemp /home/${localuser}/Downloads/log/3128.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP3128} | tr " " "\n")
 
