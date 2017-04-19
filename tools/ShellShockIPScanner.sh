@@ -29,7 +29,7 @@ echo ""
  
 # List the parameter values passed.
 echo "Hostname:  " ${host_fx}
-echo "Port:  " ${mysqlport}
+echo "    Port:  " ${mysqlport}
 echo "Username:  " ${username}
 echo "Password:  " ${password}
 echo "Database:  " ${database}
