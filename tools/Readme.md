@@ -12,3 +12,8 @@ A Windows C++ IP Scanner and ShellShock Transmitter with MYSQL backlog Support.
 * **[ShellShockBrowser.c](ShellShockBrowser.c)** **[ScreenShot](ShellShockBrowser.png)**
 
 A Windows/Linux C SOcket ShellShock WebBrowser.
+
+
+* **[ShellShockIPScanner.sh](ShellShockIPScanner.sh)**
+
+A Linux BASH Script who operate with MYSQL and nmap PortScanner. For CRON usage.
