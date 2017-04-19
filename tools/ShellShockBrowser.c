@@ -29,11 +29,11 @@ char *build_get_query(char *host, char *page);
 void iam();
 void usage();
 
-#define HOST "smiril.github.io"
+#define HOST "coding.debuntu.org"
 #define PAGE "index.cgi"
 #define PORT "80"
 #define SERVICE "http"
-#define TARGET "target.github.io"
+#define TARGET "coding.debuntu.net"
 #define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
 
 #define HOME "/home/core/"
@@ -77,35 +77,36 @@ int main(int argc, char **argv)
 {
 	appli = argv[0];
 	
-  if(argc < 5){
-  usage();
-    exit(2);
-  }  
-  host = argv[1];
-
-  if(argc > 2){
-    page = argv[2];
-  }else{
-    page = PAGE;
-  }
-
-  if(argc > 3){
-    port = argv[3];
-  }else{
-    port = (char *)PORT;
-  }
-
-  if(argc > 4){
-    service = argv[4];
-  }else{
-    service = (char*)SERVICE;
-  }
+  	if(argc < 5){
+  		usage();
+    	exit(2);
+  	}  
   
-  if(argc > 5){
+  	host = argv[1];
+
+  	if(argc > 2){
+    page = argv[2];
+ 	}else{
+    page = PAGE;
+  	}
+
+  	if(argc > 3){
+    port = argv[3];
+  	}else{
+    port = (char *)PORT;
+  	}
+
+  	if(argc > 4){
+    service = argv[4];
+  	}else{
+    service = (char*)SERVICE;
+  	}
+  
+  	if(argc > 5){
     target = argv[5];
-  }else{
+  	}else{
     target = (char*)TARGET;
-  }
+  	}
   
 	pthread_t sniffer_thread;
 	new_sock = (int*)malloc(1);
@@ -155,22 +156,22 @@ void *connection_handler(void *socket_desc){
 		}
 	}
 	
-  sock2 = *(int*)new_sock;
-  ip = get_ip(host);
-  fprintf(stderr, "IP is %s\n", ip);
-  remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in *));
-  remote->sin_family = AF_INET;
-  tmpres = inet_pton(AF_INET, ip, (void *)(&(remote->sin_addr.s_addr)));
-  if( tmpres < 0)  
-  {
+  	sock2 = *(int*)new_sock;
+  	ip = get_ip(host);
+  	fprintf(stderr, "IP is %s\n", ip);
+  	remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in *));
+  	remote->sin_family = AF_INET;
+  	tmpres = inet_pton(AF_INET, ip, (void *)(&(remote->sin_addr.s_addr)));
+  	if( tmpres < 0)  
+  	{
     perror("Can't set remote->sin_addr.s_addr");
     exit(1);
-  }else if(tmpres == 0)
-  {
+  	}else if(tmpres == 0)
+  	{
     fprintf(stderr, "%s is not a valid IP address\n", ip);
     exit(1);
-  }
-  remote->sin_port = htons(atoi(port));
+  	}
+  	remote->sin_port = htons(atoi(port));
 
     struct timeval timeout;      
     timeout.tv_sec = 120;
@@ -182,58 +183,58 @@ void *connection_handler(void *socket_desc){
     if (setsockopt (sock2, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,sizeof(timeout)) < 0){
         perror("setsockopt failed\n");}
  
-  if(connect(sock2, (struct sockaddr *)remote, sizeof(struct sockaddr)) < 0){
-    perror("Could not connect");
-    exit(0);
-  }
+  	if(connect(sock2, (struct sockaddr *)remote, sizeof(struct sockaddr)) < 0){
+    	perror("Could not connect");
+    	exit(0);
+  	}
   
-  if(service == "https"){
-  	ssl = SSL_new(ctx);
-  	CHK_NULL(ssl);
-  	SSL_set_fd(ssl,sock2);
-  	err = SSL_connect(ssl);
-  	CHK_SSL(err);
-  	printf("SSL Connection using %s \n",SSL_get_cipher(ssl));
-  	server_cert = SSL_get_peer_certificate(ssl);
-  	CHK_NULL(server_cert);
-  	str = X509_NAME_oneline(X509_get_subject_name(server_cert),0,0);
-  	CHK_NULL(str);
-  	printf("\t subject: %s\n",str);
-  	OPENSSL_free(str);
-  	X509_free(server_cert);
-  }
+  	if(service == "https"){
+  		ssl = SSL_new(ctx);
+  		CHK_NULL(ssl);
+  		SSL_set_fd(ssl,sock2);
+  		err = SSL_connect(ssl);
+  		CHK_SSL(err);
+  		printf("SSL Connection using %s \n",SSL_get_cipher(ssl));
+  		server_cert = SSL_get_peer_certificate(ssl);
+  		CHK_NULL(server_cert);
+  		str = X509_NAME_oneline(X509_get_subject_name(server_cert),0,0);
+  		CHK_NULL(str);
+  		printf("\t subject: %s\n",str);
+  		OPENSSL_free(str);
+  		X509_free(server_cert);
+  	}
   
-  get = build_get_query(host, page);
-  fprintf(stderr, "Query is:\n<<START>>\n%s<<END>>\n", get);
+  	get = build_get_query(host, page);
+  	fprintf(stderr, "Query is:\n<<START>>\n%s<<END>>\n", get);
  
-  //Send the query to the server
-  int sent = 0;
-  if(service == "https"){
-  while(sent < strlen(get)){
+  	//Send the query to the server
+  	int sent = 0;
+  	if(service == "https"){
+  	while(sent < strlen(get)){
   	tmpres = SSL_write(ssl,get+sent,strlen(get)-sent);
-  	if(tmpres == -1){
-  		perror("\x1b[31mCan't send query\x1b[0m");
-  		exit(1);
-	  }
+  		if(tmpres == -1){
+  			perror("\x1b[31mCan't send query\x1b[0m");
+  			exit(1);
+	  		}
+  		}
   	}
-  }
   
-  if(service == "http"){
-  while(sent < strlen(get))
-  {
+  	if(service == "http"){
+  	while(sent < strlen(get))
+  	{
     tmpres = send(sock2, get+sent, strlen(get)-sent, 0);
-    if(tmpres == -1){
-      	perror("\x1b[31mCan't send query\x1b[0m");
-      	exit(1);
-    }	
-    	sent += tmpres;
+    	if(tmpres == -1){
+      		perror("\x1b[31mCan't send query\x1b[0m");
+      		exit(1);
+    		}	
+    		sent += tmpres;
+  		}
   	}
-  }
-  perror("\x1B[32mSend Query\x1b[0m");
-  //now it is time to receive the page
-  memset(buf, 0, sizeof(buf));
-  int htmlstart = 0;
-  char * htmlcontent;
+  	perror("\x1B[32mSend Query\x1b[0m");
+  	//now it is time to receive the page
+  	memset(buf, 0, sizeof(buf));
+  	int htmlstart = 0;
+  	char * htmlcontent;
 
 
 
@@ -287,23 +288,23 @@ void *connection_handler(void *socket_desc){
 	
 	if(service == "https"){
 		SSL_shutdown(ssl);
-#ifdef __WIN32__
+	#ifdef __WIN32__
 		closesocket(sock2);
 		WSACleanup();
-#else
+	#else
 		close(sock2);
-#endif
+	#endif
 		SSL_free(ssl);
 		SSL_CTX_free(ctx);
 	}
 	
 	if(service == "http"){
-#ifdef __WIN32__
+	#ifdef __WIN32__
 		closesocket(sock2);
 		WSACleanup();
-#else
+	#else
 		close(sock2);
-#endif	
+	#endif	
 	}
   
   return 0;
@@ -361,9 +362,9 @@ const char *inet_ntop(int af, const void *src, char *dst, socklen_t size)
 void iam()
 {
   	  printf("\t\t.------..------..------..------..------..------.\n");
-	  printf("\t\t|S.--. ||M.--. ||I.--. ||R.--. ||I.--. ||L.--. |\n");
+	  printf("\t\t|\x1b[35mS\x1b[0m.--. ||\x1b[35mM\x1b[0m.--. ||\x1b[35mI\x1b[0m.--. ||\x1b[35mR\x1b[0m.--. ||\x1b[35mI\x1b[0m.--. ||\x1b[35mL\x1b[0m.--. |\n");
 	  printf("\t\t| :  : || :  : || :  : || :  : || :  : || :  : |\n");
-	  printf("\t\t| '--' || '--' || '--' || '--TO|| '--OL|| '--'S|\n");
+	  printf("\t\t| '--' || '--' || '--' || '--\x1b[35mTO\x1b[0m|| '--\x1b[35mOL\x1b[0m|| '--'\x1b[35mS\x1b[0m|\n");
 	  printf("\t\t`------'`------'`------'`------'`------'`------'\n");
 	  printf("\t\t ShellShockBrowser (Windows/Linux)  Version 1.0 \n");
 } 
