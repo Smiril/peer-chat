@@ -6,6 +6,11 @@ NOW=$(date +"%y-%m-%d");
 ARGV=("$@")
 ARGC=("$#")
 
+if [ "$#" -ne 5 ]; then
+    echo "USAGE: ${0} dbuser dbpassword db hostname port"
+    exit 0
+fi
+
 # Assign user and password
 username="${1}"
 password="${2}"
