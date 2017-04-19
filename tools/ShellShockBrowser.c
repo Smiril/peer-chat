@@ -36,7 +36,12 @@ void usage();
 #define TARGET "coding.debuntu.net"
 #define USERAGENT "Mozilla/5.0 (iPad; CPU OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602."
 
-#define HOME "/home/core/"
+#ifdef __WIN32__
+#define HOME "C:\\Users\\"
+#else
+#define HOME "/home/"
+#endif
+
 #define CERTF HOME "valid-root-ca.pem"
 #define KEYF HOME "valid-root-cakey.pem"
 
