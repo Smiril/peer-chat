@@ -62,20 +62,9 @@ done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
 IP3128=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '3128' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
-file2=`mktemp /home/${localuser}/Downloads/log/3128.log_XXXXXX`
+file3=`mktemp /home/${localuser}/Downloads/log/3128.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP3128} | tr " " "\n")
-
-for item in $items
-do
-    echo "$item" >> $file2
-done
-
-# Connect and pipe the query result minus errors and warnings to the while loop.
-IP8080=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8080' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
-file3=`mktemp /home/${localuser}/Downloads/log/8080.log_XXXXXX`
-# Read through the piped result until it's empty but format the title.
-items=$(echo ${IP8080} | tr " " "\n")
 
 for item in $items
 do
@@ -83,14 +72,25 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
+IP8080=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8080' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
+file4=`mktemp /home/${localuser}/Downloads/log/8080.log_XXXXXX`
+# Read through the piped result until it's empty but format the title.
+items=$(echo ${IP8080} | tr " " "\n")
+
+for item in $items
+do
+    echo "$item" >> $file4
+done
+
+# Connect and pipe the query result minus errors and warnings to the while loop.
 IP8081=$(mysql -u${username} -p${password} -D${database} -h${host_fx} --port=${mysqlport} -se "SELECT DISTINCT(IP) IP FROM SCANNER WHERE PORT = '8081' AND 'SEEN' < date_add(CURDATE(), INTERVAL 0 DAY) ORDER BY IP DESC " )
-file4=`mktemp /home/${localuser}/Downloads/log/8081.log_XXXXXX`
+file5=`mktemp /home/${localuser}/Downloads/log/8081.log_XXXXXX`
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP8081} | tr " " "\n")
 
 for item in $items
 do
-    echo "$item" >> $file4
+    echo "$item" >> $file5
 done
 
 echo "List Finalized!"
