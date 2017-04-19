@@ -1,6 +1,6 @@
 #!/bin/bash
 #!/dev/tty1
-# crontab like: 25 12 * * * sh /home/scanner.sh user password db hostname port
+# crontab like: 25 12 * * * sh /home/ShellShockReportGenerator.sh user password db hostname port
 # !!! have https://svn.nmap.org/nmap/scripts/http-shellshock.nse for nmap scanning in /home/http-shellshock.nse !!!
 NOW=$(date +"%y-%m-%d");
 ARGV=("$@")
