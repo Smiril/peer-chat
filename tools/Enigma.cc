@@ -3,7 +3,7 @@
    3 rotor German Enigma simulation.
 
    Written by  Smiril
-   8 lines Info , 23 lines License , 62 lines Makefile , 430 lines Code 
+   8 lines Info , 23 lines License , 62 lines Makefile , 439 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.cc
 
    LICENSE:
@@ -33,7 +33,7 @@ SOFTWARE.
 
 NAME := Enigma
 MAJOR := 0
-MINOR := 4
+MINOR := 5
 CODENAME := \x1B[32mT.E.D.\x1B[39m - \x1B[33mThe Enemy Dail\x1B[39m - KOENIG-MARTIN
 LIBNAME := $(NAME)
 VERSION := $(LIBNAME) $(MAJOR).$(MINOR) $(CODENAME)
