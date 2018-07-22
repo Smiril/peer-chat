@@ -1,6 +1,6 @@
 /* enigma simulation , main and bombe, sonar@gmx.com, july 2018
    the encoding scheme uses code from harald schmidl's
-   3 rotor German Enigma simulation.
+   5 rotor German Enigma simulation.
 
    Written by  Smiril
    8 lines Info , 23 lines License , 62 lines Makefile , 439 lines Code 
