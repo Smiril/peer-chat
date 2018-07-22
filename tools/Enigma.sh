@@ -320,7 +320,7 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 		//char s[MSGLEN];
 
 		(*ct)++;
-	        printf(\"\x1B[33mWheels\x1B[39m \x1B[32m%d %d %d\x1B[39m \x1B[33mStart\x1B[39m \x1B[32m%c %c %c\x1B[39m \x1B[33mRings\x1B[39m \x1B[32m%c %c %c\x1B[39m \x1B[33mStecker\x1B[39m \\"\x1B[32m%s\x1B[39m\\"\\n\",
+	        printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m%d %d %d\x1B[39m \x1B[33mStart\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mStecker\\x1B[39m \\"\\x1B[32m%s\\x1B[39m\\"\\n\",
                         p.order[0], p.order[1], p.order[2], 
                         p.pos[0], p.pos[1], p.pos[2],
                         p.rings[0], p.rings[1], p.rings[2], p.plug);
@@ -443,7 +443,7 @@ char readCh()
 {
   char c, ret;
 
-  while((c = getchar()) != '\n')
+  while((c = getchar()) != '\\n')
   ret = c;
   return ret;
 }
@@ -460,11 +460,11 @@ void initParams(Params *p)
   {
     for(i = 0; i < 3; i++)
     {
-      p->order[i] = i + 1;
-      p->rings[i] = 'A';
-      p->pos[i] = 'A';
+      p->order[i] = i + i * 5 + 1;
+      p->rings[i] = 'D' + i + 1;
+      p->pos[i] = 'G' + i + 2;
     }
-    strcpy(p->plug, \" \");
+    strcpy(p->plug, \"STOPASKING\");
   }
   else
   {
