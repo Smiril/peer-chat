@@ -1,12 +1,17 @@
 /* enigma simulation , main and bombe, sonar@gmx.com, july 2018
    the encoding scheme uses code from harald schmidl's
    5 rotor German Enigma simulation.
+   
    Written by  Smiril
    8 lines Info , 23 lines License , 62 lines Makefile , 439 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.cc
+   
    LICENSE:
+   
 MIT License
+
 Copyright (c) 2018-* sonar@gmx.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -15,6 +20,7 @@ copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,6 +29,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
    MAKEFILE:
+   
 NAME := Enigma
 MAJOR := 0
 MINOR := 5
@@ -68,6 +75,7 @@ uninstall:
 	rm -rf $(PREFIX)/enigma
 clean:
 	rm -rf enigma
+	
 */
 
 #include <stdio.h>
