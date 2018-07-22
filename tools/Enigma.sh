@@ -49,7 +49,9 @@
 @read letter[1]
 
 @echo "MIT License
+
 Copyright (c) 2018-* sonar@gmx.com
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -58,6 +60,7 @@ copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -111,6 +114,7 @@ uninstall:
 	rm -rf $(PREFIX)/enigma
 clean:
 	rm -rf enigma
+	
 " > ./Makefile
 
 @echo "#include <stdio.h>
@@ -120,10 +124,15 @@ clean:
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
+
 #define MSGLEN $(msg)
+
 #define TO '$(letter)'
+
 char s[MSGLEN];
+
 using namespace std;
+
 const char* Versionx() {
 #ifdef VERSION
   return VERSION;
@@ -131,6 +140,7 @@ const char* Versionx() {
   return \"WarGames 0.4 T.E.D. - The Enemy Dail - ENEMY-MODE\";
 #endif
 }
+
 /* Rotor wirings */
 std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 	/* Input \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" */
@@ -139,8 +149,11 @@ std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 	/* 3: */ \"$(line2)\",
 	/* 4: */ \"$(line3)\",
 	/* 5: */ \"$(line4)\" };
+	
 std::string ref=\"$(lineref)\";
+
 std::string notch=\"$(linenotch)\";
+
 /* Encryption parameters follow */
 typedef struct P
 {
@@ -149,6 +162,7 @@ typedef struct P
   char pos[3];/*={ 'A','A','A' };*/
   char plug[10];/*=\"AMTE\";*/
 } Params;
+
 /*take a char and return its encoded version according to the 
   encryption params, update params, i.e. advance wheels
   this part uses Fauzan Mirza's code*/
@@ -210,8 +224,10 @@ char scramble(char c, Params *p)
 			if (c<'A')
 				c += 26;
 		}
+		
 		/*  Reflecting rotor */
 		c=ref[c-'A'];
+		
 		/*  Rotors (reverse) */
 		for (i=3; i; i--)
 		{
@@ -243,6 +259,7 @@ char scramble(char c, Params *p)
 		}
   return c;
 }
+
 /*take a string, return encoded string*/
 char *enigma(char *in, Params *p)
 {
@@ -252,6 +269,7 @@ char *enigma(char *in, Params *p)
   s[j] = '\0';
   return s;
 }
+
 /*read in a string, and pass it through enigma*/
 void cypher(Params p)
 {
@@ -266,6 +284,7 @@ void cypher(Params p)
   
   printf(\"%s\\n%s\\n\", enigma(in, &p), in);
 }
+
 /*given a cipher text, and a crib, test all possible settings of wheel order a, b, c*/
 int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 {
@@ -318,6 +337,7 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
   }
   return 0;
 }
+
 /*do the whole check including steckering of up to two pairs of letters*/
 int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
@@ -377,6 +397,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
   }
   return 0;
 }
+
 /*run on all permutations of wheels a, b, c*/
 void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
@@ -387,6 +408,7 @@ void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
   test(c, a, b, cyph, crib, ct);
   test(c, b, a, cyph, crib, ct);
 }
+
 /*all triples of five possible wheels*/
 void permuteAll(char *cyph, char *crib)
 {
@@ -401,6 +423,7 @@ void permuteAll(char *cyph, char *crib)
   }
 printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct);
 }
+
 /*once triples of five possible wheels*/
 void permuteOnce(char *cyph, char *crib,int d,int e,int f)
 {
@@ -408,6 +431,7 @@ void permuteOnce(char *cyph, char *crib,int d,int e,int f)
   permute(d, e, f, cyph, crib, &ct);
   printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", (int)ct);
 }
+
 /*helper to read a character*/
 char readCh()
 {
@@ -416,6 +440,7 @@ char readCh()
   ret = c;
   return ret;
 }
+
 /*init the starting position*/
 void initParams(Params *p)
 {
@@ -464,6 +489,7 @@ void initParams(Params *p)
          p->pos[0], p->pos[1], p->pos[2],
          p->rings[0], p->rings[1], p->rings[2], p->plug);
 }
+
 /********************************************MAIN*********************************************/
 int main(int argc, char *argv[])
 {
