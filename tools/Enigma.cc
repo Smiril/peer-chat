@@ -415,6 +415,14 @@ void permuteAll(char *cyph, char *crib)
 printf("\nFound \x1B[32m%d\x1B[39m solutions.\n", ct);
 }
 
+/*once triples of five possible wheels*/
+void permuteOnce(char *cyph, char *crib,char *d,char *e,char *f)
+{
+  int ct = 0;
+  permute(d, e, f, cyph, crib, &ct);
+  printf("\nFound \x1B[32m%d\x1B[39m solutions.\n", ct);
+}
+
 /*helper to read a character*/
 char readCh()
 {
@@ -488,15 +496,20 @@ int main(int argc, char *argv[])
 	}
 
 	for(x=0; x<argc; x++) /*bombe case*/
-	      {
+	{
 	          if(strcmp(argv[x], "--option-1") == 0)
 	          {
                   printf("Option 1\n");
                   permuteAll(argv[x + 1], argv[x + 2]);
               }
-	          if(strcmp(argv[x], "--option-2") == 0)
+		if(strcmp(argv[x], "--option-2") == 0)
 	          {
                   printf("Option 2\n");
+                  permuteOnce(argv[x + 1], argv[x + 2], argv[x + 3], argv[x + 4], argv[x + 5]);
+              }
+	          if(strcmp(argv[x], "--option-3") == 0)
+	          {
+                  printf("Option 3\n");
                   initParams(&p);
                   cypher(p);
               }
@@ -506,7 +519,7 @@ int main(int argc, char *argv[])
               }
 	          if(strcmp(argv[x], "--help") == 0)
 	          {
-                  printf("\tHelp\n\n\t\x1B[33m--option-1 PLUG MSG\x1B[39m = Enigma Crack Algo\n\t\x1B[33m--option-2\x1B[39m = Enigma 3 Rotor Calculator\n\t\x1B[33m--version\x1B[39m = Version\n\n");
+                  printf("\tHelp\n\n\t\x1B[33m--option-1 PLUG MSG\x1B[39m = Enigma Crack Algo\n\t\x1B[33m--option-2 PLUG MSG NUM NUM NUM\x1B[39m = Enigma Crack Once Algo\n\t\x1B[33m--option-3\x1B[39m = Enigma 3 Rotor Calculator\n\t\x1B[33m--version\x1B[39m = Version\n\n");
               }
         }
   return 0 ;
