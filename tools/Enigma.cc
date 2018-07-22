@@ -354,7 +354,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
              float progress1 = (float) a * (float) b * (float) c * (float) strlen(cyph)  ;
 
              if(rotate(a, b, c, cyph, crib, s, ct)==0){
-                printf(" Progress: \x1B[32m%d\x1B[39m of 1000 done.\n",(int) progress1);
+                printf(" Progress: \x1B[32m%d\x1B[39m of Combinations done.\n",(int) progress1);
               }
             }
           }
@@ -364,7 +364,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 	    float progress2 = (float) a * (float) b * (float) c * (float) strlen(cyph) ;
 
 	    if(rotate(a, b, c, cyph, crib, s, ct)==0){
-	     	printf(" Progress: \x1B[32m%d\x1B[39m of 1000 done.\n",(int) progress2);
+	     	printf(" Progress: \x1B[32m%d\x1B[39m of Combinations done.\n",(int) progress2);
         	}
 	  	  }
 	    }
@@ -374,7 +374,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
     float progress3 = (float) a * (float) b * (float) c * (float) strlen(cyph) ;
 
     if(rotate(a, b, c, cyph, crib, s, ct)==0){
-     	printf(" Progress: \x1B[32m%d\x1B[39m of 1000 done.\n",(int) progress3);
+     	printf(" Progress: \x1B[32m%d\x1B[39m of Combinations done.\n",(int) progress3);
      	}
     }
   }
