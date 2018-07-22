@@ -106,7 +106,7 @@ clean:
 #include <iostream>
 #include <cstring>
 
-#define MSGLEN 80
+#define MSGLEN 2048
 #define TO 'E'
 
 char s[MSGLEN];
