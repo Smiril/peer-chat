@@ -43,7 +43,7 @@
 @read lineref[26]
 @echo "6 BIG Letter notch-rotor"
 @read linenotch[6]
-@echo "Message Length a 6 Signs number"
+@echo "Message Length a 2-6 Signs number"
 @read msg[6]
 @echo "1 BIG Letter fixing-rotor"
 @read letter[1]
