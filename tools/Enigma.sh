@@ -132,7 +132,7 @@ std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 
 std::string ref=\"YRUHQSLDPXNGOKMIEBFZCWVJAT\";
 
-std::string notch=\"QEVJZ\";
+std::string notch=\"GUNZIP\";
 
 /* Encryption parameters follow */
 
@@ -268,7 +268,7 @@ char *enigma(char *in, Params *p)
 /*read in a string, and pass it through enigma*/
 void cypher(Params p)
 {
-  char in[MSGLEN];//, s[MSGLEN];
+  char in[MSGLEN];
   int c, i = 0;
 
   while((c = getchar()) != '\\n')
@@ -277,7 +277,7 @@ void cypher(Params p)
     i++;
   }
   in[i] = '\0';
-  //strcpy(s, enigma(in, &p));
+  
   printf(\"%s\\n%s\\n\", enigma(in, &p), in);
 }
 
@@ -317,7 +317,7 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 	      }
 	      if(sizeof(crib) == i)
 	      {
-		//char s[MSGLEN];
+	      
 
 		(*ct)++;
 	        printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m%d %d %d\x1B[39m \x1B[33mStart\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mStecker\\x1B[39m \\"\\x1B[32m%s\\x1B[39m\\"\\n\",
@@ -342,7 +342,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
   char A, B, C, D;
   int i = 0, cs;
-  char s[5];
+  char s[6];
 
   strcpy(s, \"\");
   printf(\"Checking wheels \\x1B[33m%d %d %d\\x1B[39m\\n\",  a, b, c);
