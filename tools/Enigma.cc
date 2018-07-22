@@ -1,27 +1,20 @@
 /* enigma simulation , main and bombe, sonar@gmx.com, july 2018
    the encoding scheme uses code from harald schmidl's
    5 rotor German Enigma simulation.
-
    Written by  Smiril
    8 lines Info , 23 lines License , 62 lines Makefile , 439 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.cc
-
    LICENSE:
-
 MIT License
-
 Copyright (c) 2018-* sonar@gmx.com
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,7 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
    MAKEFILE:
-
 NAME := Enigma
 MAJOR := 0
 MINOR := 5
@@ -43,9 +35,7 @@ CXX := g++
 CXXFLAGS := -Wall -Wextra -pedantic \
         -Wno-variadic-macros \
         -DVERSION="\"$(VERSION)\""
-
 .PHONY: all enigma install uninstall clean version
-
 all: enigma
 enigma: Enigma.cc
 	$(CXX) Enigma.cc $(CXXFLAGS) $(LIBS) -o enigma
@@ -70,17 +60,14 @@ version:
 	@echo " +****************************************************************************+"
 	@cat ./LICENSE
 	
-
 install: enigma
 	mkdir -p $(PREFIX)
 	cp enigma $(PREFIX)
 	chmod +x $(PREFIX)/enigma
-
 uninstall:
 	rm -rf $(PREFIX)/enigma
 clean:
 	rm -rf enigma
-
 */
 
 #include <stdio.h>
@@ -302,7 +289,7 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 	      }
 	      if(sizeof(crib) == i)
 	      {
-		char s[MSGLEN];
+		//char s[MSGLEN];
 
 		(*ct)++;
 	        printf("\x1B[33mWheels\x1B[39m \x1B[32m%d %d %d\x1B[39m \x1B[33mStart\x1B[39m \x1B[32m%c %c %c\x1B[39m \x1B[33mRings\x1B[39m \x1B[32m%c %c %c\x1B[39m \x1B[33mStecker\x1B[39m \"\x1B[32m%s\x1B[39m\"\n",
@@ -416,11 +403,11 @@ printf("\nFound \x1B[32m%d\x1B[39m solutions.\n", ct);
 }
 
 /*once triples of five possible wheels*/
-void permuteOnce(char *cyph, char *crib,char *d,char *e,char *f)
+void permuteOnce(char *cyph, char *crib,int d,int e,int f)
 {
   int ct = 0;
   permute(d, e, f, cyph, crib, &ct);
-  printf("\nFound \x1B[32m%d\x1B[39m solutions.\n", ct);
+  printf("\nFound \x1B[32m%d\x1B[39m solutions.\n", (int)ct);
 }
 
 /*helper to read a character*/
@@ -505,7 +492,7 @@ int main(int argc, char *argv[])
 		if(strcmp(argv[x], "--option-2") == 0)
 	          {
                   printf("Option 2\n");
-                  permuteOnce(argv[x + 1], argv[x + 2], argv[x + 3], argv[x + 4], argv[x + 5]);
+                  permuteOnce(argv[x + 1], argv[x + 2], atoi(argv[x + 3]), atoi(argv[x + 4]), atoi(argv[x + 5]));
               }
 	          if(strcmp(argv[x], "--option-3") == 0)
 	          {
