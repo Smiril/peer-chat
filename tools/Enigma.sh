@@ -29,10 +29,23 @@
 @echo " +****************************************************************************+
    LICENSE:MIT License"
 
+@echo "26 BIG Letter First-rotor"
+@read line0[26]
+@echo "26 BIG Letter Second-rotor"
+@read line1[26]
+@echo "26 BIG Letter Third-rotor"
+@read line2[26]
+@echo "26 BIG Letter Fourth-rotor"
+@read line3[26]
+@echo "26 BIG Letter Fifth-rotor"
+@read line4[26]
+@echo "26 BIG Letter ref-rotor"
+@read lineref[26]
+@echo "6 BIG Letter notch-rotor"
+@read linenotch[6]
+
 @echo "MIT License
-
 Copyright (c) 2018-* sonar@gmx.com
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -41,7 +54,6 @@ copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -95,7 +107,6 @@ uninstall:
 	rm -rf $(PREFIX)/enigma
 clean:
 	rm -rf enigma
-
 " > ./Makefile
 
 @echo "#include <stdio.h>
@@ -105,14 +116,10 @@ clean:
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
-
 #define MSGLEN 2048
 #define TO 'E'
-
 char s[MSGLEN];
-
 using namespace std;
-
 const char* Versionx() {
 #ifdef VERSION
   return VERSION;
@@ -120,22 +127,17 @@ const char* Versionx() {
   return \"WarGames 0.4 T.E.D. - The Enemy Dail - ENEMY-MODE\";
 #endif
 }
-
 /* Rotor wirings */
 std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 	/* Input \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" */
-	/* 1: */ \"EKMFLGDQVZNTOWYHXUSPAIBRCJ\",
-	/* 2: */ \"AJDKSIRUXBLHWTMCQGZNPYFVOE\",
-	/* 3: */ \"BDFHJLCPRTXVZNYEIWGAKMUSQO\",
-	/* 4: */ \"ESOVPZJAYQUIRHXLNFTGKDCMWB\",
-	/* 5: */ \"VZBRGITYUPSDNHLXAWMJQOFECK\" };
-
-std::string ref=\"YRUHQSLDPXNGOKMIEBFZCWVJAT\";
-
-std::string notch=\"GUNZIP\";
-
+	/* 1: */ \"$(line0)\",
+	/* 2: */ \"$(line1)\",
+	/* 3: */ \"$(line2)\",
+	/* 4: */ \"$(line3)\",
+	/* 5: */ \"$(line4)\" };
+std::string ref=\"$(lineref)\";
+std::string notch=\"$(linenotch)\";
 /* Encryption parameters follow */
-
 typedef struct P
 {
   char order[3];/*={ 1, 2, 3 };*/
@@ -143,14 +145,12 @@ typedef struct P
   char pos[3];/*={ 'A','A','A' };*/
   char plug[10];/*=\"AMTE\";*/
 } Params;
-
 /*take a char and return its encoded version according to the 
   encryption params, update params, i.e. advance wheels
   this part uses Fauzan Mirza's code*/
 char scramble(char c, Params *p)
 {
   int i, j, flag = 0;
-
 		c=toupper(c);
 		if (!isalpha(c))
 			return -1;
@@ -159,7 +159,6 @@ char scramble(char c, Params *p)
 		p->pos[0]++;
 		if (p->pos[0]>'Z')
 			p->pos[0] -= 26;
-
 		/* Check if second rotor reached notch last time */
 		if (flag)
 		{
@@ -172,7 +171,6 @@ char scramble(char c, Params *p)
 				p->pos[2] -= 26;
 			flag=0;
 		}
-
 		/*  Step up second rotor if first rotor reached notch */
 		if (p->pos[0]==notch[p->order[0]-1])
 		{
@@ -183,7 +181,6 @@ char scramble(char c, Params *p)
 			if (p->pos[1]==notch[p->order[1]-1])
 				flag=1;
 		}
-
 		/*  Swap pairs of letters on the plugboard */
 		for (i=0; p->plug[i]; i+=2)
 		{
@@ -192,52 +189,41 @@ char scramble(char c, Params *p)
 			else if (c==p->plug[i+1])
 				c=p->plug[i];
 		}
-
 		/*  Rotors (forward) */
 		for (i=0; i<3; i++)
 		{
 			c += p->pos[i]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->rings[i]-'A';
 			if (c<'A')
 				c += 26;
-
 			c=rotor[p->order[i]-1][c-'A'];
-
 			c += p->rings[i]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->pos[i]-'A';
 			if (c<'A')
 				c += 26;
 		}
-
 		/*  Reflecting rotor */
 		c=ref[c-'A'];
-
 		/*  Rotors (reverse) */
 		for (i=3; i; i--)
 		{
 			c += p->pos[i-1]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->rings[i-1]-'A';
 			if (c<'A')
 				c += 26;
-
 			for (j=0; j<26; j++)
 				if (rotor[p->order[i-1]-1][j]==c)
 					break;
 			c=j+'A';
-
 			c += p->rings[i-1]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->pos[i-1]-'A';
 			if (c<'A')
 				c += 26;
@@ -251,10 +237,8 @@ char scramble(char c, Params *p)
 			else if (c==p->plug[i+1])
 				c=p->plug[i];
 		}
-
   return c;
 }
-
 /*take a string, return encoded string*/
 char *enigma(char *in, Params *p)
 {
@@ -264,13 +248,11 @@ char *enigma(char *in, Params *p)
   s[j] = '\0';
   return s;
 }
-
 /*read in a string, and pass it through enigma*/
 void cypher(Params p)
 {
   char in[MSGLEN];
   int c, i = 0;
-
   while((c = getchar()) != '\\n')
   {
     in[i] = toupper(c);
@@ -280,12 +262,10 @@ void cypher(Params p)
   
   printf(\"%s\\n%s\\n\", enigma(in, &p), in);
 }
-
 /*given a cipher text, and a crib, test all possible settings of wheel order a, b, c*/
 int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 {
   Params p;
-
   p.order[0] = a;
   p.order[1] = b;
   p.order[2] = c;
@@ -305,7 +285,6 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
             {
 	      Params cp = p;
 	      unsigned int i = 0;
-
 	      while(sizeof(crib) > i)
 	      {
 		if(cyph[i] != scramble(crib[i], &cp)){
@@ -318,7 +297,6 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 	      if(sizeof(crib) == i)
 	      {
 	      
-
 		(*ct)++;
 	        printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m%d %d %d\x1B[39m \x1B[33mStart\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mStecker\\x1B[39m \\"\\x1B[32m%s\\x1B[39m\\"\\n\",
                         p.order[0], p.order[1], p.order[2], 
@@ -336,14 +314,12 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
   }
   return 0;
 }
-
 /*do the whole check including steckering of up to two pairs of letters*/
 int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
   char A, B, C, D;
   int i = 0, cs;
   char s[6];
-
   strcpy(s, \"\");
   printf(\"Checking wheels \\x1B[33m%d %d %d\\x1B[39m\\n\",  a, b, c);
   for(cs = 0; cs < 3; cs++)
@@ -372,7 +348,6 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 		s[3] = D;
 		s[4] = '\0';
              float progress1 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
-
              if(rotate(a, b, c, cyph, crib, s, ct)==0){
                 printf(\" Progress: \\x1B[32m%d\\x1B[39m of Combinations done.\\n\",(int) progress1);
               }
@@ -382,7 +357,6 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 	  }
 	  else{
 	    float progress2 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
-
 	    if(rotate(a, b, c, cyph, crib, s, ct)==0){
 	     	printf(\" Progress: \\x1B[32m%d\\x1B[39m of Combinations done.\\n\",(int) progress2);
         	}
@@ -392,7 +366,6 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
     }
     else{
     float progress3 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) r* 6 ;
-
     if(rotate(a, b, c, cyph, crib, s, ct)==0){
      	printf(\" Progress: \\x1B[32m%d\\x1B[39m of Combinations done.\\n\",(int) progress3);
      	}
@@ -400,8 +373,6 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
   }
   return 0;
 }
-
-
 /*run on all permutations of wheels a, b, c*/
 void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
@@ -412,14 +383,11 @@ void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
   test(c, a, b, cyph, crib, ct);
   test(c, b, a, cyph, crib, ct);
 }
-
 /*all triples of five possible wheels*/
 void permuteAll(char *cyph, char *crib)
 {
   int ct = 0;
   std::string d,e,f;
-
-
   for(int d = 1;d<=999;d++){
 	  for(int e = 1;e<=999;e++){
 		  for(int f = 1;f<=999;f++){
@@ -429,7 +397,6 @@ void permuteAll(char *cyph, char *crib)
   }
 printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct);
 }
-
 /*once triples of five possible wheels*/
 void permuteOnce(char *cyph, char *crib,int d,int e,int f)
 {
@@ -437,23 +404,19 @@ void permuteOnce(char *cyph, char *crib,int d,int e,int f)
   permute(d, e, f, cyph, crib, &ct);
   printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", (int)ct);
 }
-
 /*helper to read a character*/
 char readCh()
 {
   char c, ret;
-
   while((c = getchar()) != '\\n')
   ret = c;
   return ret;
 }
-
 /*init the starting position*/
 void initParams(Params *p)
 {
   int i;
   char c;
-
   printf(\"d)efault or u)ser: \");
   c = readCh();
   if(c != 'u')
@@ -497,19 +460,15 @@ void initParams(Params *p)
          p->pos[0], p->pos[1], p->pos[2],
          p->rings[0], p->rings[1], p->rings[2], p->plug);
 }
-
-
 /********************************************MAIN*********************************************/
 int main(int argc, char *argv[])
 {
   Params p;
   int x;
-
 	if(argc == 1){ /*main case*/
 		printf(\"Option usage: %s --help\\n\",argv[0]);
 		exit(1);
 	}
-
 	for(x=0; x<argc; x++) /*bombe case*/
 	{
 	          if(strcmp(argv[x], \"--option-1\") == 0)
@@ -539,7 +498,6 @@ int main(int argc, char *argv[])
         }
   return 0 ;
 }
-
 " > ./Enigma.cc
 
 make && make install && make clean && make version
