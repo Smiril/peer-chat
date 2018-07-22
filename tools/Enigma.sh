@@ -43,6 +43,10 @@
 @read lineref[26]
 @echo "6 BIG Letter notch-rotor"
 @read linenotch[6]
+@echo "Message Length a 6 Signs number"
+@read msg[6]
+@echo "1 BIG Letter fixing-rotor"
+@read letter[1]
 
 @echo "MIT License
 Copyright (c) 2018-* sonar@gmx.com
@@ -116,8 +120,8 @@ clean:
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
-#define MSGLEN 2048
-#define TO 'E'
+#define MSGLEN $(msg)
+#define TO '$(letter)'
 char s[MSGLEN];
 using namespace std;
 const char* Versionx() {
