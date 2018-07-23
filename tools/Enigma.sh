@@ -341,9 +341,9 @@ void permuteAll(char *cyph, char *crib)
 { 
   int ct = 0; 
   std::string d,e,f; 
-  for(int d = 1;d<=999;d++){ 
-	  for(int e = 1;e<=999;e++){ 
-		  for(int f = 1;f<=999;f++){ 
+  for(int d = 1;d<=9;d++){ 
+	  for(int e = 1;e<=9;e++){ 
+		  for(int f = 1;f<=9;f++){ 
 			  permute(d, e, f, cyph, crib, &ct); 
 		  } 
 	  } 
@@ -446,7 +446,7 @@ int main(int argc, char *argv[])
               } 
 	          if(strcmp(argv[x], \"--help\") == 0) 
 	          { 
-                  printf(\"\\tHelp\\n\\n\\t\\x1B[33m--option-1 PLUG MSG\\x1B[39m = Enigma Crack Algo from 1 1 1 to 999 999 999\\n\\t\\x1B[33m--option-2 PLUG MSG NUM NUM NUM\\x1B[39m = Enigma Crack Once Algo\\n\\t\\x1B[33m--option-3\\x1B[39m = Enigma 5 Rotor Calculator\\n\\t\\x1B[33m--version\\x1B[39m = Version\\n\\n\"); 
+                  printf(\"\\tHelp\\n\\n\\t\\x1B[33m--option-1 PLUG MSG\\x1B[39m = Enigma Crack Algo from 1 1 1 to 9 9 9\\n\\t\\x1B[33m--option-2 PLUG MSG NUM NUM NUM\\x1B[39m = Enigma Crack Once Algo\\n\\t\\x1B[33m--option-3\\x1B[39m = Enigma 5 Rotor Calculator\\n\\t\\x1B[33m--version\\x1B[39m = Version\\n\\n\"); 
               } 
         } 
   return 0 ; 
