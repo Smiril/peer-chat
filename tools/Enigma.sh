@@ -483,4 +483,6 @@ cat ./LICENSE
 
 rm -rf ./LICENSE
 
+enigma --version --help 
+
 exit 0
