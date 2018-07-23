@@ -32,7 +32,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   7 lines Info , 20 lines License , 455 lines Code 
+   7 lines Info , 20 lines License , 459 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.sh"
 
 echo " +****************************************************************************+
@@ -125,12 +125,12 @@ int matrix() {
 void logo(){
 	printf(\" +****************************************************************************+\");
 	printf(\" + Enigma 0.5                                    ###     Art-ifact      ###   +\");
-	printf(\" + CODENAME:                                    /   ##     #####      ##   \\\  +\");
-	printf(\" +           T.E.D.                           #\\\     ##   #######   ##     /# +\");
+	printf(\" +                                              /   ##     #####      ##   \\\  +\");
+	printf(\" + CODENAME: T.E.D.                           #\\\     ##   #######   ##     /# +\");
 	printf(\" +           The Enemy Dail                     #     ###############     #   +\");
 	printf(\" +           KOENIG-MARTIN                    #/      ###############      \\\# +\");
 	printf(\" +                                             \\\   #\\\##    ##^##    ##/#   /  +\");
-	printf(\" +                                              ##/   \\\#####/_\\\#####/    \\\##  +\");
+	printf(\" +        German Enigma Simulation              ##/   \\\#####/_\\\#####/    \\\##  +\");
 	printf(\" +                                                      \\\#########/           +\");
 	printf(\" +                                                      / # # # # \\\           +\");
 	printf(\" +                                               /###__/   # # #   \\\__###\\\    +\");
@@ -360,7 +360,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 		s[3] = D; 
 		s[4] = '\0'; 
 		
-             float progress1 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;  
+             float progress1 = 26 * 3 * (float) strlen(cyph) * (float) strlen(crib) ;  
              if(rotate(a, b, c, cyph, crib, s, ct)==0){ 
                 printf(\" Progress: \\x1B[32m%d\\x1B[39m of Combinations done.\\n\",(int) progress1); 
               } 
@@ -369,7 +369,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 	    } 
 	  } 
 	  else{ 
-	    float progress2 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ; 
+	    float progress2 = 26 * 3 * (float) strlen(cyph) * (float) strlen(crib) ; 
 	    if(rotate(a, b, c, cyph, crib, s, ct)==0){ 
 	     	printf(\" Progress: \\x1B[32m%d\\x1B[39m of Combinations done.\\n\",(int) progress2); 
         	} 
@@ -378,7 +378,7 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
       } 
     } 
     else{ 
-    float progress3 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ; 
+    float progress3 = 26 * 3 * (float) strlen(cyph) * (float) strlen(crib) ; 
     if(rotate(a, b, c, cyph, crib, s, ct)==0){ 
      	printf(\" Progress: \\x1B[32m%d\\x1B[39m of Combinations done.\\n\",(int) progress3); 
      	} 
@@ -387,14 +387,20 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
   return 0; 
 } 
 /*run on all permutations of wheels a, b, c*/
-void permute(int a, int b, int c, char *cyph, char *crib, int *ct) 
+void permute(int a, int b, int c, char *cyph, char *crib, int ct) 
 { 
-  test(a, b, c, cyph, crib, ct); 
-  test(a, c, b, cyph, crib, ct); 
-  test(b, a, c, cyph, crib, ct); 
-  test(b, c, a, cyph, crib, ct); 
-  test(c, a, b, cyph, crib, ct); 
-  test(c, b, a, cyph, crib, ct); 
+  test(a, b, c, cyph, crib, &ct);
+  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct); 
+  test(a, c, b, cyph, crib, &ct);
+  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct); 
+  test(b, a, c, cyph, crib, &ct); 
+  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct);
+  test(b, c, a, cyph, crib, &ct); 
+  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct);
+  test(c, a, b, cyph, crib, &ct); 
+  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct);
+  test(c, b, a, cyph, crib, &ct); 
+  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct);
 } 
 /*all triples of five possible wheels*/
 void permuteAll(char *cyph, char *crib) 
@@ -404,18 +410,16 @@ void permuteAll(char *cyph, char *crib)
   for(int d = 1;d<=9;d++){ 
 	  for(int e = 1;e<=9;e++){ 
 		  for(int f = 1;f<=9;f++){ 
-			  permute(d, e, f, cyph, crib, &ct); 
+			  permute(d, e, f, cyph, crib, ct); 
 		  } 
 	  } 
-  } 
-printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", ct); 
+  }  
 } 
 /*once triples of five possible wheels*/
 void permuteOnce(char *cyph, char *crib,int d,int e,int f) 
 { 
   int ct = 0; 
-  permute(d, e, f, cyph, crib, &ct); 
-  printf(\"\\nFound \\x1B[32m%d\\x1B[39m solutions.\\n\", (int)ct); 
+  permute(d, e, f, cyph, crib, ct); 
 } 
 /*helper to read a character*/
 char readCh() 
@@ -547,4 +551,7 @@ cat ./LICENSE
 
 rm -rf ./LICENSE
 
+enigma --version
+
 exit 0
+
