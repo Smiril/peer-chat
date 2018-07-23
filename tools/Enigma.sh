@@ -124,21 +124,21 @@ int matrix() {
     return 0;
 }
 void logo(){
-	printf("\t\t\t\t     (\\               /)\n");
-	printf("\t\t\t\t    __)\\             /(__\n");
-	printf("\t\t\t\t   __)_ \\  (\\!~!/)  / _(__\n");
-	printf("\t\t\t\t  __)_ `.\\  )d b(  /.' _(__\n");
-	printf("\t\t\t\t___)_ `. \\\(  _  )// .' _(___\n");
-	printf("\t\t\t\t )_  `. \\  ((q_p))  / .'  _(_\n");
-	printf("\t\t\t\t _)`.  \\  ,-)\\_/(-.  /  .'(_\n");
-	printf("\t\t\t\t  _) ,-._/v/vvvvv\v\\_,-. (_\n");
-	printf("\t\t\t\t  _)///(._/v(___)v\\_.)\\\(_\n");
-	printf("\t\t\t\t   \\_ ___/v(_____)v\\___ _/\n");
-	printf("\t\t\t\t     /vvv\\(_______)/vvv\\\n");
-	printf("\t\t\t\t     \\vvv/v(_____)v\\vvv/  \n");
-	printf("\t\t\t\t     _\\vv\\\v(___)v//vv/_\n");
-	printf("\t\t\t\t    '>_`  \\`-._.-'/  '_<`\n");
-	printf("\t\t\t\t    ' >_,-'       `-._<`\n");
+	printf(\"\\t\\t\\t\\t     (\\               /)\\n\");
+	printf(\"\\t\\t\\t\\t    __)\\             /(__\\n\");
+	printf(\"\\t\\t\\t\\t   __)_ \\  (\\!~!/)  / _(__\\n\");
+	printf(\"\\t\\t\\t\\t  __)_ `.\\  )d b(  /.' _(__\\n\");
+	printf(\"\\t\\t\\t\\t___)_ `. \\\(  _  )// .' _(___\\n\");
+	printf(\"\\t\\t\\t\\t )_  `. \\  ((q_p))  / .'  _(_\\n\");
+	printf(\"\\t\\t\\t\\t _)`.  \\  ,-)\\_/(-.  /  .'(_\\n\");
+	printf(\"\\t\\t\\t\\t  _) ,-._/v/vvvvv\v\\_,-. (_\\n\");
+	printf(\"\\t\\t\\t\\t  _)///(._/v(___)v\\_.)\\\(_\\n\");
+	printf(\"\\t\\t\\t\\t   \\_ ___/v(_____)v\\___ _/\\n\");
+	printf(\"\\t\\t\\t\\t     /vvv\\(_______)/vvv\\\\n\");
+	printf(\"\\t\\t\\t\\t     \\vvv/v(_____)v\\vvv/  \\n\");
+	printf(\"\\t\\t\\t\\t     _\\vv\\\v(___)v//vv/_\\n·\");
+	printf(\"\\t\\t\\t\\t    '>_`  \\`-._.-'/  '_<`\\n\");
+	printf(\"\\t\\t\\t\\t    ' >_,-'       `-._<`\\n\");
 }
 /* Rotor wirings */
 std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */ 
