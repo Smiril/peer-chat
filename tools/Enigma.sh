@@ -483,7 +483,7 @@ int main(int argc, char *argv[])
 		logo();
 		matrix();
 		printf(\"\\x1b[0m\");
-		printf(\"Option usage: %s --help\\n\",argv[0]);  
+		printf(\"\\nOption usage: %s --help\\n\",argv[0]);  
 		exit(1); 
 	} 
 	for(x=0; x<argc; x++) /*bombe case*/ 
