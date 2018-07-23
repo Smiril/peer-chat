@@ -380,7 +380,7 @@ void initParams(Params *p)
       p->rings[i] = 'D' + i + 1; 
       p->pos[i] = 'G' + i + 2; 
     } 
-    strcpy(p->plug, \"STOPASKING\"); 
+    strcpy(p->plug, \"TOPASKING\"); 
   } 
   else 
   { 
