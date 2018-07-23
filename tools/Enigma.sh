@@ -3,15 +3,9 @@
 ARGV=("$@")
 ARGC=("$#")
 
-if [ "$#" -ne 9 ]; then
-    echo "USAGE: ${0} rotor-1 rotor-2 rotor-3 rotor-4 rotor-5 ref-rotor notch-rotor msg-length fixing-letter"
-    echo "${0} EKMFLGDQVZNTOWYHXUSPAIBRCJ AJDKSIRUXBLHWTMCQGZNPYFVOE BDFHJLCPRTXVZNYEIWGAKMUSQO ESOVPZJAYQUIRHXLNFTGKDCMWB VZBRGITYUPSDNHLXAWMJQOFECK YRUHQSLDPXNGOKMIEBFZCWVJAT QEVJZX 999999 A"
-    exit 0
-fi
-
 echo " +****************************************************************************+"
 echo " + Enigma 0.5                                     ###     Art-ifact      ###  +" 
-echo " + CODENAME:                                    /   ##      #####      ##   \\ +"
+echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
 echo " +           KOENIG-MARTIN                    #/      ###############      \\# +"
@@ -25,6 +19,12 @@ echo " +                                               \\######## R A T ########
 echo " +                                                     Entertainment          +"
 echo " +****************************************************************************+"
 
+if [ "$#" -ne 9 ]; then
+    echo "USAGE: ${0} rotor-1 rotor-2 rotor-3 rotor-4 rotor-5 ref-rotor notch-rotor msg-length fixing-letter"
+    echo "${0} EKMFLGDQVZNTOWYHXUSPAIBRCJ AJDKSIRUXBLHWTMCQGZNPYFVOE BDFHJLCPRTXVZNYEIWGAKMUSQO ESOVPZJAYQUIRHXLNFTGKDCMWB VZBRGITYUPSDNHLXAWMJQOFECK YRUHQSLDPXNGOKMIEBFZCWVJAT QEVJZX 999999 A"
+    exit 0
+fi
+
 echo " +****************************************************************************+ 
    enigma simulation , main and bombe, sonar@gmx.com, july 2018
    the encoding scheme uses code from harald schmidl's
@@ -32,7 +32,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   7 lines Info , 23 lines License , 442 lines Code 
+   7 lines Info , 20 lines License , 391 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.sh"
 
 echo " +****************************************************************************+
@@ -454,14 +454,18 @@ int main(int argc, char *argv[])
  " > ./Enigma.cc
 
 g++ ./Enigma.cc -Wall -Wextra -pedantic -Wno-variadic-macros -DVERSION="\"Enigma 0.5 \\x1B[32mT.E.D.\\x1B[39m - \\x1B[33mThe Enemy Dail\\x1B[39m - KOENIG-MARTIN \"" -lstdc++ -o enigma 
+
 mkdir -p bin
-cp ./enigma bin
-chmod +x bin/enigma 
-rm -rf ./enigma 
- 	
+
+mv ./enigma bin
+
+chmod +x bin/enigma
+
+rm -rf ./Enigma.cc
+	
 echo " +****************************************************************************+"
 echo " + Enigma 0.5                                     ###     Art-ifact      ###  +" 
-echo " + CODENAME:                                    /   ##      #####      ##   \\ +"
+echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
 echo " +           KOENIG-MARTIN                    #/      ###############      \\# +"
@@ -476,5 +480,7 @@ echo " +                                                     Entertainment      
 echo " +****************************************************************************+"
  
 cat ./LICENSE
+
+rm -rf ./LICENSE
 
 exit 0
