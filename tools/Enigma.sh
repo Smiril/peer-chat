@@ -4,7 +4,7 @@ ARGV=("$@")
 ARGC=("$#")
 
 echo " +****************************************************************************+"
-echo " + Enigma 0.5                                     ###     Art-ifact      ###  +" 
+echo " + Enigma 0.5                                     ###     Art-ifact     ###   +" 
 echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
@@ -464,7 +464,7 @@ chmod +x bin/enigma
 rm -rf ./Enigma.cc
 	
 echo " +****************************************************************************+"
-echo " + Enigma 0.5                                     ###     Art-ifact      ###  +" 
+echo " + Enigma 0.5                                     ###     Art-ifact     ###   +" 
 echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
