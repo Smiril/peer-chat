@@ -69,7 +69,6 @@ echo "
 #include <iostream>
 #include <string>
 #include <vector>
-#include <mutex>
 #include <cstring> 
 #define MSGLEN ${8} 
 #define TO '${9}' 
@@ -119,26 +118,26 @@ int matrix() {
 		caRow[Modulus(l, 80)] = '-';
 		caRow[Modulus(m, 80)] = ' ';
 		// Delay
-		Sleep(10);
+		sleep(10);
 	} //end for
     return 0;
 }
 void logo(){
-	printf(\"\\t\\t\\t\\t     (\\               /)\\n\");
-	printf(\"\\t\\t\\t\\t    __)\\             /(__\\n\");
-	printf(\"\\t\\t\\t\\t   __)_ \\  (\\!~!/)  / _(__\\n\");
-	printf(\"\\t\\t\\t\\t  __)_ `.\\  )d b(  /.' _(__\\n\");
-	printf(\"\\t\\t\\t\\t___)_ `. \\\(  _  )// .' _(___\\n\");
-	printf(\"\\t\\t\\t\\t )_  `. \\  ((q_p))  / .'  _(_\\n\");
-	printf(\"\\t\\t\\t\\t _)`.  \\  ,-)\\_/(-.  /  .'(_\\n\");
-	printf(\"\\t\\t\\t\\t  _) ,-._/v/vvvvv\v\\_,-. (_\\n\");
-	printf(\"\\t\\t\\t\\t  _)///(._/v(___)v\\_.)\\\(_\\n\");
-	printf(\"\\t\\t\\t\\t   \\_ ___/v(_____)v\\___ _/\\n\");
-	printf(\"\\t\\t\\t\\t     /vvv\\(_______)/vvv\\\\n\");
-	printf(\"\\t\\t\\t\\t     \\vvv/v(_____)v\\vvv/  \\n\");
-	printf(\"\\t\\t\\t\\t     _\\vv\\\v(___)v//vv/_\\n·\");
-	printf(\"\\t\\t\\t\\t    '>_`  \\`-._.-'/  '_<`\\n\");
-	printf(\"\\t\\t\\t\\t    ' >_,-'       `-._<`\\n\");
+	printf(\" +****************************************************************************+\");
+	printf(\" + Enigma 0.5                                    ###     Art-ifact      ###   +\");
+	printf(\" + CODENAME:                                    /   ##     #####      ##   \\\  +\");
+	printf(\" +           T.E.D.                           #\\\     ##   #######   ##     /# +\");
+	printf(\" +           The Enemy Dail                     #     ###############     #   +\");
+	printf(\" +           KOENIG-MARTIN                    #/      ###############      \\\# +\");
+	printf(\" +                                             \\\   #\\\##    ##^##    ##/#   /  +\");
+	printf(\" +                                              ##/   \\\#####/_\\\#####/    \\\##  +\");
+	printf(\" +                                                      \\\#########/           +\");
+	printf(\" +                                                      / # # # # \\\           +\");
+	printf(\" +                                               /###__/   # # #   \\\__###\\\    +\");
+	printf(\" +                                               #        /#####\\\        #    +\");
+	printf(\" +                                               \\\######## R A T ########/    +\");
+	printf(\" +                                                     Entertainment          +\");
+	printf(\" +****************************************************************************+\");
 }
 /* Rotor wirings */
 std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */ 
@@ -480,10 +479,10 @@ int main(int argc, char *argv[])
   Params p; 
   int x; 
 	if(argc == 1){ /*main case*/ 
-		printf("\x1b[32m");
+		printf(\"\\x1b[32m\");
 		logo();
 		matrix();
-		printf("\x1b[0m");
+		printf(\"\\x1b[0m\");
 		printf(\"Option usage: %s --help\\n\",argv[0]);  
 		exit(1); 
 	} 
