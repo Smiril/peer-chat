@@ -118,7 +118,7 @@ int matrix() {
 		caRow[Modulus(l, 80)] = '-';
 		caRow[Modulus(m, 80)] = ' ';
 		// Delay
-		sleep(10);
+		//sleep(10);
 	} //end for
     return 0;
 }
