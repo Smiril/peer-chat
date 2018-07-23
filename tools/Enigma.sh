@@ -32,7 +32,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   7 lines Info , 20 lines License , 391 lines Code 
+   7 lines Info , 20 lines License , 456 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.sh"
 
 echo " +****************************************************************************+
@@ -66,7 +66,10 @@ echo "
 #include <string.h> 
 #include <memory.h> 
 #include <cstdlib> 
-#include <iostream> 
+#include <iostream>
+#include <string>
+#include <vector>
+#include <mutex>
 #include <cstring> 
 #define MSGLEN ${8} 
 #define TO '${9}' 
@@ -79,6 +82,64 @@ const char* Versionx() {
   return \"WarGames 0.4 T.E.D. - The Enemy Dail - ENEMY-MODE\";  
 #endif 
 } 
+int Modulus(int iN, int iMod) {
+	int iQ = (iN/iMod);
+	return iN - (iQ*iMod);
+}
+char GetChar(int iGenerator, char cBase, int iRange) {
+	return (cBase + Modulus(iGenerator, iRange));
+}
+int matrix() {
+	char caRow[80];
+	int j = 7;
+	int k = 2;
+	int l = 5;
+	int m = 1;
+	for (int ccc = 0;ccc <= 255;ccc++) {
+		// Output a random row of characters
+		for ( int i = 0; i < 80; ++i ) 
+		{
+			if (caRow[i] != ' ') {
+				caRow[i] = GetChar(j + i*i, 33, 30);
+				if (((i*i + k) % 71) == 0) {
+					;
+				} else {
+					;
+				}
+			}
+			std::cout << caRow[i];
+			;
+		}
+		j = (j + 31);
+		k = (k + 17);
+		l = (l + 47);
+		m = (m + 67);
+		caRow[Modulus(j, 80)] = '-';
+		caRow[Modulus(k, 80)] = ' ';
+		caRow[Modulus(l, 80)] = '-';
+		caRow[Modulus(m, 80)] = ' ';
+		// Delay
+		Sleep(10);
+	} //end for
+    return 0;
+}
+void logo(){
+	printf("\t\t\t\t     (\\               /)\n");
+	printf("\t\t\t\t    __)\\             /(__\n");
+	printf("\t\t\t\t   __)_ \\  (\\!~!/)  / _(__\n");
+	printf("\t\t\t\t  __)_ `.\\  )d b(  /.' _(__\n");
+	printf("\t\t\t\t___)_ `. \\\(  _  )// .' _(___\n");
+	printf("\t\t\t\t )_  `. \\  ((q_p))  / .'  _(_\n");
+	printf("\t\t\t\t _)`.  \\  ,-)\\_/(-.  /  .'(_\n");
+	printf("\t\t\t\t  _) ,-._/v/vvvvv\v\\_,-. (_\n");
+	printf("\t\t\t\t  _)///(._/v(___)v\\_.)\\\(_\n");
+	printf("\t\t\t\t   \\_ ___/v(_____)v\\___ _/\n");
+	printf("\t\t\t\t     /vvv\\(_______)/vvv\\\n");
+	printf("\t\t\t\t     \\vvv/v(_____)v\\vvv/  \n");
+	printf("\t\t\t\t     _\\vv\\\v(___)v//vv/_\n");
+	printf("\t\t\t\t    '>_`  \\`-._.-'/  '_<`\n");
+	printf("\t\t\t\t    ' >_,-'       `-._<`\n");
+}
 /* Rotor wirings */
 std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */ 
 	/* Input \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" */ 
@@ -250,7 +311,7 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 	      { 
 	      
 		(*ct)++; 
-	        printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m%d %d %d\x1B[39m \x1B[33mStart\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mStecker\\x1B[39m \\"\\x1B[32m%s\\x1B[39m\\"\\n\", 
+	        printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m%d %d %d\x1B[39m \x1B[33mStart\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m%c %c %c\\x1B[39m \\x1B[33mStecker\\x1B[39m \\\"\\x1B[32m%s\\x1B[39m\\\"\\n\", 
                         p.order[0], p.order[1], p.order[2],  
                         p.pos[0], p.pos[1], p.pos[2], 
                         p.rings[0], p.rings[1], p.rings[2], p.plug); 
@@ -419,6 +480,10 @@ int main(int argc, char *argv[])
   Params p; 
   int x; 
 	if(argc == 1){ /*main case*/ 
+		printf("\x1b[32m");
+		logo();
+		matrix();
+		printf("\x1b[0m");
 		printf(\"Option usage: %s --help\\n\",argv[0]);  
 		exit(1); 
 	} 
@@ -482,7 +547,5 @@ echo " +************************************************************************
 cat ./LICENSE
 
 rm -rf ./LICENSE
-
-enigma --version --help 
 
 exit 0
