@@ -408,7 +408,7 @@ void initParams(Params *p)
       } 
       p->plug[i] = '\0'; 
   } 
-  printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m %d %d %d \\x1B[39m \\x1B[33mStart\\x1B[39m \\x1B[32m %c %c %c \\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m %c %c %c \\x1B[39m Stecker \\"\\x1B[32m %s \\x1B[39m\\"\\n\", 
+  printf(\"\\x1B[33mWheels\\x1B[39m \\x1B[32m %d %d %d \\x1B[39m \\x1B[33mStart\\x1B[39m \\x1B[32m %c %c %c \\x1B[39m \\x1B[33mRings\\x1B[39m \\x1B[32m %c %c %c \\x1B[39m Stecker \\\"\\x1B[32m%s\\x1B[39m\\\"\\n\", 
          p->order[0], p->order[1], p->order[2],  
          p->pos[0], p->pos[1], p->pos[2], 
          p->rings[0], p->rings[1], p->rings[2], p->plug); 
