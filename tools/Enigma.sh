@@ -376,7 +376,7 @@ void initParams(Params *p)
   { 
     for(i = 0; i < 3; i++) 
     { 
-      p->order[i] = i + i * 5 + 1;  
+      p->order[i] = i + i + 3;  
       p->rings[i] = 'D' + i + 1; 
       p->pos[i] = 'G' + i + 2; 
     } 
