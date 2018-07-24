@@ -25,6 +25,8 @@ if [ "$#" -ne 9 ]; then
     exit 0
 fi
 
+sudo zypper install at-spi2-atk-common at-spi2-atk-gtk2 gtk2-data gtk2-devel gtk2-immodule-amharic gtk2-immodule-inuktitut gtk2-metatheme-adwaita gtk2-tools gtk2-tools-32bit patterns-openSUSE-base patterns-openSUSE-devel_basis patterns-openSUSE-devel_C_C++ gcc-g++ git
+
 echo " +****************************************************************************+ 
    enigma simulation , main and bombe, sonar@gmx.com, july 2018
    the encoding scheme uses code from harald schmidl's
@@ -554,4 +556,3 @@ rm -rf ./LICENSE
 enigma --version
 
 exit 0
-
