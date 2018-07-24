@@ -333,8 +333,8 @@ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 { 
   char A, B, C, D; 
   int i = 0, cs; 
-  char s[6]; 
-  strcpy(s, \"\"); 
+  char s[10]; 
+  strcpy(s, cyph); 
   printf(\"Checking wheels \\x1B[33m%d %d %d\\x1B[39m\\n\",  a, b, c); 
   for(cs = 0; cs < 3; cs++) 
   { 
@@ -547,6 +547,16 @@ echo " +                                               /###__/   # # #   \\__###
 echo " +                                               #        /#####\\        #    +"
 echo " +                                               \\######## R A T ########/    +"
 echo " +                                                     Entertainment          +"
+echo " +****************************************************************************+"
+ 
+cat ./LICENSE
+
+rm -rf ./LICENSE
+
+enigma --version
+
+exit 0
+" +                                                     Entertainment          +"
 echo " +****************************************************************************+"
  
 cat ./LICENSE
