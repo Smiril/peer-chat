@@ -556,14 +556,4 @@ rm -rf ./LICENSE
 enigma --version
 
 exit 0
-" +                                                     Entertainment          +"
-echo " +****************************************************************************+"
- 
-cat ./LICENSE
-
-rm -rf ./LICENSE
-
-enigma --version
-
-exit 0
 
