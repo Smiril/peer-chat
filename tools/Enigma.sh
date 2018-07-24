@@ -21,7 +21,7 @@ echo " +************************************************************************
 
 if [ "$#" -ne 9 ]; then
     echo "USAGE: ${0} rotor-1 rotor-2 rotor-3 rotor-4 rotor-5 ref-rotor notch-rotor msg-length fixing-letter"
-    echo "${0} EKMFLGDQVZNTOWYHXUSPAIBRCJ AJDKSIRUXBLHWTMCQGZNPYFVOE BDFHJLCPRTXVZNYEIWGAKMUSQO ESOVPZJAYQUIRHXLNFTGKDCMWB VZBRGITYUPSDNHLXAWMJQOFECK YRUHQSLDPXNGOKMIEBFZCWVJAT QEVJZX 999999 A"
+    echo "USAGE: ${0} EKMFLGDQVZNTOWYHXUSPAIBRCJ AJDKSIRUXBLHWTMCQGZNPYFVOE BDFHJLCPRTXVZNYEIWGAKMUSQO ESOVPZJAYQUIRHXLNFTGKDCMWB VZBRGITYUPSDNHLXAWMJQOFECK YRUHQSLDPXNGOKMIEBFZCWVJAT QEVJZX 999999 A"
     exit 0
 fi
 
@@ -132,11 +132,11 @@ void logo(){
 	printf(\" +           The Enemy Dail                     #     ###############     #   +\");
 	printf(\" +           KOENIG-MARTIN                    #/      ###############      \\\# +\");
 	printf(\" +                                             \\\   #\\\##    ##^##    ##/#   /  +\");
-	printf(\" +        German Enigma Simulation              ##/   \\\#####/_\\\#####/    \\\##  +\");
+	printf(\" + TITLE:   KORTIN-ENIGMA V                     ##/   \\\#####/_\\\#####/    \\\##  +\");
 	printf(\" +                                                      \\\#########/           +\");
-	printf(\" +                                                      / # # # # \\\           +\");
+	printf(\" +      German Enigma Simulation                        / # # # # \\\           +\");
 	printf(\" +                                               /###__/   # # #   \\\__###\\\    +\");
-	printf(\" +                                               #        /#####\\\        #    +\");
+	printf(\" +      Author:    sonar@gmx.com                 #        /#####\\\        #    +\");
 	printf(\" +                                               \\\######## R A T ########/    +\");
 	printf(\" +                                                     Entertainment          +\");
 	printf(\" +****************************************************************************+\");
@@ -556,3 +556,4 @@ rm -rf ./LICENSE
 enigma --version
 
 exit 0
+
