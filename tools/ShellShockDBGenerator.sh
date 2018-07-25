@@ -6,8 +6,8 @@ NOW=$(date +"%y-%m-%d");
 ARGV=("$@")
 ARGC=("$#")
 
-if [ "$#" -ne 6 ]; then
-    echo "USAGE: ${0} dbuser dbpassword db hostname port 18-07-25"
+if [ "$#" -ne 7 ]; then
+    echo "USAGE: ${0} dbuser dbpassword db hostname port 18-07-25 localuser"
     exit 0
 fi
 
@@ -19,7 +19,7 @@ host_fx="${4}"
 mysqlport1="${5}"
 
 # Assign local user for www presentation scan results
-localuser="core"
+localuser="${7}"
 report=`cat /home/${localuser}/public_html/report_${6}_*`
  
 # List the parameter values passed.
