@@ -20,7 +20,7 @@ mysqlport1="${5}"
 
 # Assign local user for recv www presentation scan results
 localuser="${7}"
-report=`cat /home/${localuser}/public_html/report_${6}_XXXXXX`
+report=`cat /home/${localuser}/public_html/report_${6}_*`
  
 # List the parameter values passed.
 echo "Hostname:  " ${host_fx}
