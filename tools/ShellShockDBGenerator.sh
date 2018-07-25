@@ -6,8 +6,8 @@ NOW=$(date +"%y-%m-%d");
 ARGV=("$@")
 ARGC=("$#")
 
-if [ "$#" -ne 7 ]; then
-    echo "USAGE: ${0} dbuser dbpassword db hostname port 2018-07-25 localuser"
+if [ "$#" -ne 6 ]; then
+    echo "USAGE: ${0} dbuser dbpassword db hostname port 18-07-25"
     exit 0
 fi
 
@@ -18,8 +18,8 @@ database1="${3}"
 host_fx="${4}"
 mysqlport1="${5}"
 
-# Assign local user for recv www presentation scan results
-localuser="${7}"
+# Assign local user for www presentation scan results
+localuser="core"
 report=`cat /home/${localuser}/public_html/report_${6}_*`
  
 # List the parameter values passed.
@@ -31,7 +31,7 @@ echo "Database:  " ${database1}
 echo ""
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP21=$(cat $report | awk `/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}` | awk `BEGIN {FS="("}; {print $2}` | awk `BEGIN {FS=")"}; {print $1}` | grep -C 10 -v `|_http-shellshock:` | grep -C 20 `21/tcp open`)
+IP21=$(cat $report | awk '/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}' | awk 'BEGIN {FS="("}; {print $2}' | awk 'BEGIN {FS=")"}; {print $1}' | grep -C 10 -v '|_http-shellshock:' | grep -C 20 '21/tcp open')
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP21} | tr " " "\n")
 
@@ -41,7 +41,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP80=$(cat $report | awk `/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}` | awk `BEGIN {FS="("}; {print $2}` | awk `BEGIN {FS=")"}; {print $1}` | grep -C 10 -v `|_http-shellshock:` | grep -C 20 `80/tcp open`)
+IP80=$(cat $report | awk '/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}' | awk 'BEGIN {FS="("}; {print $2}' | awk 'BEGIN {FS=")"}; {print $1}' | grep -C 10 -v '|_http-shellshock:' | grep -C 20 '80/tcp open')
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP80} | tr " " "\n")
 
@@ -51,7 +51,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP443=$(cat $report | awk `/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}` | awk `BEGIN {FS="("}; {print $2}` | awk `BEGIN {FS=")"}; {print $1}` | grep -C 10 -v `|_http-shellshock:` | grep -C 20 `443/tcp open`)
+IP443=$(cat $report | awk '/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}' | awk 'BEGIN {FS="("}; {print $2}' | awk 'BEGIN {FS=")"}; {print $1}' | grep -C 10 -v '|_http-shellshock:' | grep -C 20 '443/tcp open')
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP443} | tr " " "\n")
 
@@ -61,7 +61,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP3128=$(cat $report | awk `/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}` | awk `BEGIN {FS="("}; {print $2}` | awk `BEGIN {FS=")"}; {print $1}` | grep -C 10 -v `|_http-shellshock:` | grep -C 20 `3128/tcp open`)
+IP3128=$(cat $report | awk '/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}' | awk 'BEGIN {FS="("}; {print $2}' | awk 'BEGIN {FS=")"}; {print $1}' | grep -C 10 -v '|_http-shellshock:' | grep -C 20 '3128/tcp open')
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP3128} | tr " " "\n")
 
@@ -71,7 +71,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP8080=$(cat $report | awk `/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}` | awk `BEGIN {FS="("}; {print $2}` | awk `BEGIN {FS=")"}; {print $1}` | grep -C 10 -v `|_http-shellshock:` | grep -C 20 `8080/tcp open`)
+IP8080=$(cat $report | awk '/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}' | awk 'BEGIN {FS="("}; {print $2}' | awk 'BEGIN {FS=")"}; {print $1}' | grep -C 10 -v '|_http-shellshock:' | grep -C 20 '8080/tcp open')
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP8080} | tr " " "\n")
 
@@ -81,7 +81,7 @@ do
 done
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
-IP8081=$(cat $report | awk `/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}` | awk `BEGIN {FS="("}; {print $2}` | awk `BEGIN {FS=")"}; {print $1}` | grep -C 10 -v `|_http-shellshock:` | grep -C 20 `8081/tcp open`)
+IP8081=$(cat $report | awk '/([0-9]{1,3}\.){3}[0-9]{1,3}/ {print $6}' | awk 'BEGIN {FS="("}; {print $2}' | awk 'BEGIN {FS=")"}; {print $1}' | grep -C 10 -v '|_http-shellshock:' | grep -C 20 '8081/tcp open')
 # Read through the piped result until it's empty but format the title.
 items=$(echo ${IP8081} | tr " " "\n")
 
@@ -91,7 +91,7 @@ do
 done
 
 echo ""
-echo "Done feeding MYSQL Database \"${database1}\"!"
+echo "Done feeding MYSQL Database ${database1}"
 echo ""
 echo "Report: $report"
 echo ""
