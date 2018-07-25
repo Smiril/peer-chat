@@ -19,6 +19,10 @@ A Windows/Linux C SOcket ShellShock WebBrowser.
 A Linux BASH Script who operate with MYSQL and nmap PortScanner. For CRON usage.
 
 
+* **[ShellShockDBGenerator.sh](ShellShockDBGenerator.sh)**
+
+A Linux BASH Script who operate with MYSQL and nmap scanned Report. For MANUAL usage.
+
 * **[Enigma.sh](Enigma.sh)** **[ScreenShot](Enigma.png)**
 
 A Linux C++ Enigma Simulator
