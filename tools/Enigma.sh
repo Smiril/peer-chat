@@ -126,20 +126,20 @@ int matrix() {
 }
 void logo(){
 	printf(\" +****************************************************************************+\");
-	printf(\"  + Enigma 0.5                                    ###     Art-ifact      ###   +\");
-	printf(\"   +                                              /   ##     #####      ##   \\\  +\");
-	printf(\"    + CODENAME: T.E.D.                           #\\\     ##   #######   ##     /# +\");
-	printf(\"     +           The Enemy Dail                     #     ###############     #   +\");
-	printf(\"      +           KOENIG-MARTIN                    #/      ###############      \\\# +\");
-	printf(\"       +                                             \\\   #\\\##    ##^##    ##/#   /  +\");
-	printf(\"        + TITLE:   KORTIN-ENIGMA V                     ##/   \\\#####/_\\\#####/    \\\##  +\");
-	printf(\"         +                                                      \\\#########/           +\");
-	printf(\"          +      German Enigma Simulation                        / # # # # \\\           +\");
-	printf(\"           +                                               /###__/   # # #   \\\__###\\\    +\");
-	printf(\"            +      Author:    sonar@gmx.com                 #        /#####\\\        #    +\");
-	printf(\"             +                                               \\\######## R A T ########/    +\");
-	printf(\"              +                                                     Entertainment          +\");
-	printf(\"               +****************************************************************************+\");
+	printf(\" + Enigma 0.5                                    ###     Art-ifact      ###   +\");
+	printf(\" +                                              /   ##     #####      ##   \\\  +\");
+	printf(\" + CODENAME: T.E.D.                           #\\\     ##   #######   ##     /# +\");
+	printf(\" +           The Enemy Dail                     #     ###############     #   +\");
+	printf(\" +           KOENIG-MARTIN                    #/      ###############      \\\# +\");
+	printf(\" +                                             \\\   #\\\##    ##^##    ##/#   /  +\");
+	printf(\" + TITLE:   KORTIN-ENIGMA V                     ##/   \\\#####/_\\\#####/    \\\##  +\");
+	printf(\" +                                                      \\\#########/           +\");
+	printf(\" +      German Enigma Simulation                        / # # # # \\\           +\");
+	printf(\" +                                               /###__/   # # #   \\\__###\\\    +\");
+	printf(\" +      Author:    sonar@gmx.com                 #        /#####\\\        #    +\");
+	printf(\" +                                               \\\######## R A T ########/    +\");
+	printf(\" +                                                     Entertainment          +\");
+	printf(\" +****************************************************************************+\");
 }
 /* Rotor wirings */
 std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */ 
@@ -556,4 +556,3 @@ rm -rf ./LICENSE
 enigma --version
 
 exit 0
-
