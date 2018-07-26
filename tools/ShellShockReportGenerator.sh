@@ -35,12 +35,7 @@ echo "Password:  *********"
 echo "Database:  " ${database}
 echo ""
 
-echo "Clean Log Files"
-$(command -v rm) -rf /home/${localuser}/Downloads/log/ 
-mkdir /home/${localuser}/Downloads/log
-echo ""
-
-echo "Done cleaning!"
+$(command -v mkdir)  /home/${localuser}/Downloads/log
 echo ""
 
 # Connect and pipe the query result minus errors and warnings to the while loop.
@@ -125,6 +120,7 @@ echo ""
 echo "Report: $report"
 echo ""
 
+$(command -v rm) -rf /home/${localuser}/Downloads/log/ 
 $(command -v rm) -rf ./http-shellshock.nse
 
 exit 0
