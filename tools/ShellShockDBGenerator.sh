@@ -93,7 +93,7 @@ done
 echo ""
 echo "Done feeding MYSQL Database ${database1}"
 echo ""
-echo "Report: $report"
+echo "Report: " $report
 echo ""
 
 exit 0
