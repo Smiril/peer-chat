@@ -29,4 +29,4 @@ A Linux C++ Enigma Simulator
 
 * **[OVPN-CRON.sh](OVPN-CRON.sh)**
 
-Some OpenVPN Client dealings with CRON and Shellscript
+Some OpenVPN Client dealings with CRON and BASH Script
