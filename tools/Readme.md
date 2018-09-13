@@ -30,3 +30,8 @@ A Linux C++ Enigma Simulator
 * **[OVPN-CRON.sh](OVPN-CRON.sh)**
 
 Some OpenVPN Client dealings with CRON and BASH Script
+
+* **[SHA1-BF.sh](SHA1-BF.sh)** **[README](https://github.com/smoes/SHA1-CUDA-bruteforce/Readme.md)**
+
+SHA1 Bruteforce chars with Nvidia CUDA GPU Calculating function.
+
