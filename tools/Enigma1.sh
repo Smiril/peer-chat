@@ -35,7 +35,7 @@ echo " +************************************************************************
 echo " +****************************************************************************+
    Written by  Smiril
    7 lines Info , 20 lines License , 501 lines Code 
-   @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.sh"
+   @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma1.sh"
 
 echo " +****************************************************************************+
    LICENSE:MIT License"
