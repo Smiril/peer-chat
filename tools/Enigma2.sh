@@ -504,7 +504,7 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 	      for(D = C + 1; D <= TO; D++)
               {
 	        if(D == A || D == B){
-		continue;
+		//continue;
 		i++;
 		s[2] = C;
 		s[3] = D;
