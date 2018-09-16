@@ -696,6 +696,7 @@ void initParams(Params *p)
          p->pos[0], p->pos[1], p->pos[2],
          p->rings[0], p->rings[1], p->rings[2], p->plug);
 }
+
 void startonce(word * hash_tmp, word * crib,int d , int e , int f, word * res)
 {
     unsigned char * buffer = 0;
@@ -727,6 +728,244 @@ void startonce(word * hash_tmp, word * crib,int d , int e , int f, word * res)
     cudaFree((void*)buffer);
     cudaFree((void*)hash);
 }
+
+/*
+ * device function __device__ void memInit(uint, uchar, int)
+ * 
+ * Prepare word for sha-256 (expand, add length etc)
+*/
+
+
+__device__ void memInit(word * tmp, char input[], int length)
+{
+
+    int stop = 0;
+    // reseting tmp
+    for(int i = 0; i < 80; i++) tmp[i] = 0;
+
+    // fill tmp like: message char c0,c1,c2,...,cn,10000000,00...000
+    for(int i = 0; i < length; i+=4)
+    {
+        for(int j = 0; j < 4; j++)
+            if(i + j < length)
+                tmp[i/4] |= input[i+j] << (24-j * 8);
+            else 
+            {
+                stop = 1;
+                break;
+            }
+        if(stop)
+            break;
+    }
+    tmp[length/4] |= 0x80 << (24-(length%4) * 8);     // Append 1 then zeros
+    // Adding length as last value
+    tmp[15] |= length * 8;
+}
+
+__global__ void smash(int length, char * buffer, word * hash)
+{
+    word h0,h1,h2,h3,h4,h5,h6,h7;
+    int higher = 126;
+    int lower = 32;
+    char *input_cpy = 0;
+    int carry = 1;
+
+    // load into register
+    h0 = hash[0];
+    h1 = hash[1];
+    h2 = hash[2];
+    h3 = hash[3];
+    h4 = hash[4];
+    h5 = hash[5];
+    h6 = hash[6];
+    h7 = hash[7];
+
+    if(length > 3)
+       for(int i = 3; i < 10; i++)
+           input_cpy[i] = lower;
+       
+
+    // init input_cpy
+    input_cpy[0] = threadIdx.x + lower;
+    if(length > 1)
+        input_cpy[1] = (blockIdx.x / 95) + lower;
+            if(length > 2)
+	    		input_cpy[2] = (blockIdx.x % 95) + lower;
+
+    // Length for carry flag (break) if length < 3
+    short int s = length < 3 ? length : 3;
+
+    // value @length as a flag.
+    //if (s != nullptr)
+    for(int i = length; i < 10; i++)
+            input_cpy[i] = 0;
+        
+    
+    // Init words for SHA
+    word W[80],A,B,C,D,E,F,G,H,temp;
+ 
+    // calculate all possible charsets with the
+    // given threadId, blockId and length
+    while(input_cpy[length] == 0 && buffer[0] == 0) //@TODO || flag) 
+    {
+        // Calculate sha256 for given input.
+        // DO THE SHA256 ------------------------------------------------------
+        //calc_sha256(hash, input_cpy, length);
+    uint32_t h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
+	int i,j,ah;
+
+	/* 512-bit chunks is what we will operate on. */
+	word chunk[64];
+
+	struct buffer_state state;
+
+	init_buf_state(&state, hash, length);
+
+	while (calc_chunk(chunk, &state)) {
+		uint32_t ah[8];
+		
+		/*
+		 * create a 64-entry message schedule array w[0..63] of 32-bit words
+		 * (The initial values in w[0..63] don't matter, so many implementations zero them here)
+		 * copy chunk into first 16 words w[0..15] of the message schedule array
+		 */
+		uint32_t w[64];
+		word *p = chunk;
+        memInit(W, input_cpy, length);
+        for (i = 0; i < 16; i++) {
+			w[i] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
+				(uint32_t) p[2] << 8 | (uint32_t) p[3];
+			p += 4;
+		}
+
+		/* Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array: */
+		for (i = 16; i < 64; i++) {
+			const uint32_t s0 = right_rot(w[i - 15], 7) ^ right_rot(w[i - 15], 18) ^ (w[i - 15] >> 3);
+			const uint32_t s1 = right_rot(w[i - 2], 17) ^ right_rot(w[i - 2], 19) ^ (w[i - 2] >> 10);
+			w[i] = w[i - 16] + s0 + w[i - 7] + s1;
+		}
+		
+		/* Initialize working variables to current hash value: */
+		for (i = 0; i < 8; i++)
+			ah[i] = h[i];
+
+		/* Compression function main loop: */
+		for (i = 0; i < 64; i++) {
+			const uint32_t s1 = right_rot(ah[4], 6) ^ right_rot(ah[4], 11) ^ right_rot(ah[4], 25);
+			const uint32_t ch = (ah[4] & ah[5]) ^ (~ah[4] & ah[6]);
+			const uint32_t temp1 = ah[7] + s1 + ch + k[i] + w[i];
+            const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
+			const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
+			const uint32_t temp2 = s0 + maj;
+
+			ah[7] = ah[6];
+			ah[6] = ah[5];
+			ah[5] = ah[4];
+			ah[4] = ah[3] + temp1;
+			ah[3] = ah[2];
+			ah[2] = ah[1];
+			ah[1] = ah[0];
+			ah[0] = temp1 + temp2;
+
+            }
+        }
+
+		/* Add the compressed chunk to the current hash value: */
+		for (i = 0; i < 8; i++)
+			h[i] += ah[i];
+	
+	/* Produce the final hash value (big-endian): */
+	for (i = 0, j = 0; i < 8; i++)
+	{
+		hash[j++] = (word) (h[i] >> 24);
+		hash[j++] = (word) (h[i] >> 16);
+		hash[j++] = (word) (h[i] >> 8);
+		hash[j++] = (word) h[i];
+	}
+        
+        for(int i = 16; i < 80; i++)
+            W[i] = ROT( ( W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16] ) , 1 ); 
+        
+        
+        A = I1;    B = I2;    C = I3;    D = I4;    E = I5;
+
+        CALC(1,0);  CALC(1,1);  CALC(1,2);  CALC(1,3);  CALC(1,4);
+        CALC(1,5);  CALC(1,6);  CALC(1,7);  CALC(1,8);  CALC(1,9);
+        CALC(1,10); CALC(1,11); CALC(1,12); CALC(1,13); CALC(1,14);
+        CALC(1,15); CALC(1,16); CALC(1,17); CALC(1,18); CALC(1,19);
+        CALC(2,20); CALC(2,21); CALC(2,22); CALC(2,23); CALC(2,24);
+        CALC(2,25); CALC(2,26); CALC(2,27); CALC(2,28); CALC(2,29);
+        CALC(2,30); CALC(2,31); CALC(2,32); CALC(2,33); CALC(2,34);
+        CALC(2,35); CALC(2,36); CALC(2,37); CALC(2,38); CALC(2,39);
+        CALC(3,40); CALC(3,41); CALC(3,42); CALC(3,43); CALC(3,44);
+        CALC(3,45); CALC(3,46); CALC(3,47); CALC(3,48); CALC(3,49);
+        CALC(3,50); CALC(3,51); CALC(3,52); CALC(3,53); CALC(3,54);
+        CALC(3,55); CALC(3,56); CALC(3,57); CALC(3,58); CALC(3,59);
+        CALC(4,60); CALC(4,61); CALC(4,62); CALC(4,63); CALC(4,64);
+        CALC(4,65); CALC(4,66); CALC(4,67); CALC(4,68); CALC(4,69);
+        CALC(4,70); CALC(4,71); CALC(4,72); CALC(4,73); CALC(4,74);
+        CALC(4,75); CALC(4,76); CALC(4,77); CALC(4,78); CALC(4,79);
+    
+        // That needs to be done, == with like (A + I1) =0 hash[0] 
+        // is wrong all the time?!
+        word tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8;   
+ 
+        tmp1 = A + I1;
+        tmp2 = B + I2;
+        tmp3 = C + I3;
+        tmp4 = D + I4;
+        tmp5 = E + I5;
+        tmp6 = F + I6;
+        tmp7 = G + I7;
+        tmp8 = H + I8;
+
+        // if result was found, cpy to buffer
+        if( tmp1 == h0 && 
+            tmp2 == h1 &&
+            tmp3 == h2 &&
+            tmp4 == h3 &&
+            tmp5 == h4 &&
+            tmp6 == h5 &&
+            tmp7 == h6 &&
+            tmp8 == h7 )
+        { 
+            buffer[0] = input_cpy[0];   
+            buffer[1] = input_cpy[1];   
+            buffer[2] = input_cpy[2];   
+            buffer[3] = input_cpy[3];   
+            buffer[4] = input_cpy[4];   
+            buffer[5] = input_cpy[5];   
+            buffer[6] = input_cpy[6];   
+            buffer[7] = input_cpy[7];   
+            buffer[8] = input_cpy[8];   
+            buffer[9] = input_cpy[9];   
+        }
+        
+        // adding new value
+        // DO THE ADDITION ----------------------------------------------
+    
+        for(int i = s; i < 10; i++)
+        {
+            if(carry)
+            {
+                input_cpy[i] = input_cpy[i]+ 1;
+                if(input_cpy[i] > higher)
+                {
+                    input_cpy[i] = lower;
+                    carry = 1;
+                } else 
+                    carry = 0;
+            } else 
+                break;
+        }
+
+        carry = 1;
+
+    }
+
+}
+
+
 
 void startAll(word * hash_tmp,  word * crib, word * res)
 {
@@ -763,8 +1002,8 @@ void startAll(word * hash_tmp,  word * crib, word * res)
 
 void start(word * hash_tmp,  word * length, word * res)
 {
-    unsigned char * buffer = 0;
-    unsigned char * buffer_fill = 0x0;
+    char * buffer = 0;
+    char * buffer_fill = 0x0;
     cudaMalloc((void**)&buffer,10 * sizeof(buffer));
     cudaMalloc((void**)&hash,5 * sizeof(hash));
     
@@ -780,7 +1019,7 @@ void start(word * hash_tmp,  word * length, word * res)
     // - blocks: count of possible chars squared
     // - threads: possible chars
    
-    smash<<<9025,95>>>(length, buffer, hash);
+    smash<<<9025,95>>>((int)length, buffer, hash);
 
     cudaMemcpy((void*)res, (const void*)buffer, sizeof(buffer),cudaMemcpyDeviceToHost);
     //cudaMemcpy(debug, hash, 5 * sizeof(word), cudaMemcpyDeviceToHost);
@@ -793,203 +1032,7 @@ void start(word * hash_tmp,  word * length, word * res)
     cudaFree((void*)hash);
 }
 
-__global__ void smash(int length, char * buffer, word * hash)
-{
-    word h0,h1,h2,h3,h4,h5,h6,h7;
-    int higher = 126;
-    int lower = 32;
-    char *input_cpy = 0;
-    int carry = 1;
-    // load into register
-    h0 = hash[0];
-    h1 = hash[1];
-    h2 = hash[2];
-    h3 = hash[3];
-    h4 = hash[4];
-    h5 = hash[5];
-    h6 = hash[6];
-    h7 = hash[7];
-    if(length > 3)
-       for(int i = 3; i < 10; i++)
-           input_cpy[i] = lower;
-       
-    // init input_cpy
-    input_cpy[0] = threadIdx.x + lower;
-    if(length > 1)
-        input_cpy[1] = (blockIdx.x / 95) + lower;
-            if(length > 2)
-	    		input_cpy[2] = (blockIdx.x % 95) + lower;
-    // Length for carry flag (break) if length < 3
-    short int s = length < 3 ? length : 3;
-    // value @length as a flag.
-    //if (s != nullptr)
-    for(int i = length; i < 10; i++)
-            input_cpy[i] = 0;
-        
-    
-    // Init words for SHA
-    word W[80],A,B,C,D,E,F,G,H,temp;
- 
-    // calculate all possible charsets with the
-    // given threadId, blockId and length
-    while(input_cpy[length] == 0 && buffer[0] == 0) //@TODO || flag) 
-    {
-        // Calculate sha256 for given input.
-        // DO THE SHA256 ------------------------------------------------------
-        //calc_sha256(hash, input_cpy, length);
-        
-        memInit(W, input_cpy, length);
-        for (i = 0; i < 16; i++) {
-			w[i] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
-				(uint32_t) p[2] << 8 | (uint32_t) p[3];
-			p += 4;
-		}
-		/* Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array: */
-		for (i = 16; i < 64; i++) {
-			const uint32_t s0 = right_rot(w[i - 15], 7) ^ right_rot(w[i - 15], 18) ^ (w[i - 15] >> 3);
-			const uint32_t s1 = right_rot(w[i - 2], 17) ^ right_rot(w[i - 2], 19) ^ (w[i - 2] >> 10);
-			w[i] = w[i - 16] + s0 + w[i - 7] + s1;
-		}
-		
-		/* Initialize working variables to current hash value: */
-		for (i = 0; i < 8; i++)
-			ah[i] = h[i];
-		/* Compression function main loop: */
-		for (i = 0; i < 64; i++) {
-			const uint32_t s1 = right_rot(ah[4], 6) ^ right_rot(ah[4], 11) ^ right_rot(ah[4], 25);
-			const uint32_t ch = (ah[4] & ah[5]) ^ (~ah[4] & ah[6]);
-			const uint32_t temp1 = ah[7] + s1 + ch + k[i] + w[i];
-			const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
-			const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
-			const uint32_t temp2 = s0 + maj;
-			ah[7] = ah[6];
-			ah[6] = ah[5];
-			ah[5] = ah[4];
-			ah[4] = ah[3] + temp1;
-			ah[3] = ah[2];
-			ah[2] = ah[1];
-			ah[1] = ah[0];
-			ah[0] = temp1 + temp2;
-		}
-		/* Add the compressed chunk to the current hash value: */
-		for (i = 0; i < 8; i++)
-			h[i] += ah[i];
-	}
-	/* Produce the final hash value (big-endian): */
-	for (i = 0, j = 0; i < 8; i++)
-	{
-		hash[j++] = (uint8_t) (h[i] >> 24);
-		hash[j++] = (uint8_t) (h[i] >> 16);
-		hash[j++] = (uint8_t) (h[i] >> 8);
-		hash[j++] = (uint8_t) h[i];
-	}
-        
-        for(int i = 16; i < 80; i++)
-            W[i] = ROT( ( W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16] ) , 1 ); 
-        
-        
-        A = I1;    B = I2;    C = I3;    D = I4;    E = I5;
-        CALC(1,0);  CALC(1,1);  CALC(1,2);  CALC(1,3);  CALC(1,4);
-        CALC(1,5);  CALC(1,6);  CALC(1,7);  CALC(1,8);  CALC(1,9);
-        CALC(1,10); CALC(1,11); CALC(1,12); CALC(1,13); CALC(1,14);
-        CALC(1,15); CALC(1,16); CALC(1,17); CALC(1,18); CALC(1,19);
-        CALC(2,20); CALC(2,21); CALC(2,22); CALC(2,23); CALC(2,24);
-        CALC(2,25); CALC(2,26); CALC(2,27); CALC(2,28); CALC(2,29);
-        CALC(2,30); CALC(2,31); CALC(2,32); CALC(2,33); CALC(2,34);
-        CALC(2,35); CALC(2,36); CALC(2,37); CALC(2,38); CALC(2,39);
-        CALC(3,40); CALC(3,41); CALC(3,42); CALC(3,43); CALC(3,44);
-        CALC(3,45); CALC(3,46); CALC(3,47); CALC(3,48); CALC(3,49);
-        CALC(3,50); CALC(3,51); CALC(3,52); CALC(3,53); CALC(3,54);
-        CALC(3,55); CALC(3,56); CALC(3,57); CALC(3,58); CALC(3,59);
-        CALC(4,60); CALC(4,61); CALC(4,62); CALC(4,63); CALC(4,64);
-        CALC(4,65); CALC(4,66); CALC(4,67); CALC(4,68); CALC(4,69);
-        CALC(4,70); CALC(4,71); CALC(4,72); CALC(4,73); CALC(4,74);
-        CALC(4,75); CALC(4,76); CALC(4,77); CALC(4,78); CALC(4,79);
-    
-        // That needs to be done, == with like (A + I1) =0 hash[0] 
-        // is wrong all the time?!
-        word tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8;   
- 
-        tmp1 = A + I1;
-        tmp2 = B + I2;
-        tmp3 = C + I3;
-        tmp4 = D + I4;
-        tmp5 = E + I5;
-        tmp6 = F + I6;
-        tmp7 = G + I7;
-        tmp8 = H + I8;
-        // if result was found, cpy to buffer
-        if( tmp1 == h0 && 
-            tmp2 == h1 &&
-            tmp3 == h2 &&
-            tmp4 == h3 &&
-            tmp5 == h4 &&
-            tmp6 == h5 &&
-            tmp7 == h6 &&
-            tmp8 == h7 )
-        { 
-            buffer[0] = input_cpy[0];   
-            buffer[1] = input_cpy[1];   
-            buffer[2] = input_cpy[2];   
-            buffer[3] = input_cpy[3];   
-            buffer[4] = input_cpy[4];   
-            buffer[5] = input_cpy[5];   
-            buffer[6] = input_cpy[6];   
-            buffer[7] = input_cpy[7];   
-            buffer[8] = input_cpy[8];   
-            buffer[9] = input_cpy[9];   
-            
-            break;
-        }
-        
-        // adding new value
-        // DO THE ADDITION ----------------------------------------------
-    
-        for(int i = s; i < 10; i++)
-        {
-            if(carry)
-            {
-                input_cpy[i] = input_cpy[i]+ 1;
-                if(input_cpy[i] > higher)
-                {
-                    input_cpy[i] = lower;
-                    carry = 1;
-                } else 
-                    carry = 0;
-            } else 
-                break;
-        }
-        carry = 1;
-    }
-}
-/*
- * device function __device__ void memInit(uint, uchar, int)
- * 
- * Prepare word for sha-256 (expand, add length etc)
-*/
-__device__ void memInit(word * tmp, unsigned char input[], int length)
-{
-    int stop = 0;
-    // reseting tmp
-    for(int i = 0; i < 80; i++) tmp[i] = 0;
-    // fill tmp like: message char c0,c1,c2,...,cn,10000000,00...000
-    for(int i = 0; i < length; i+=4)
-    {
-        for(int j = 0; j < 4; j++)
-            if(i + j < length)
-                tmp[i/4] |= input[i+j] << (24-j * 8);
-            else 
-            {
-                stop = 1;
-                break;
-            }
-        if(stop)
-            break;
-    }
-    tmp[length/4] |= 0x80 << (24-(length%4) * 8);     // Append 1 then zeros
-    // Adding length as last value
-    tmp[15] |= length * 8;
-}
+
 /********************************************MAIN*********************************************/
 int main(int argc, char *argv[])
 {
