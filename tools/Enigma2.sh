@@ -35,7 +35,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   8 lines Info , 20 lines License , 975 lines Code 
+   8 lines Info , 20 lines License , 986 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma2.sh"
 
 echo " +****************************************************************************+
