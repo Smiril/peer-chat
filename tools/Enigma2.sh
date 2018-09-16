@@ -1017,7 +1017,7 @@ __device__ void memInit(word * tmp, unsigned char input[], int length)
 
     int stop = 0;
     // reseting tmp
-    for(int i = 0; i < MSGLEN; i++) tmp[i] = 0;
+    for(int i = 0; i < 80; i++) tmp[i] = 0;
 
     // fill tmp like: message char c0,c1,c2,...,cn,10000000,00...000
     for(int i = 0; i < length; i+=4)
