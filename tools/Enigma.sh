@@ -4,12 +4,12 @@ ARGV=("$@")
 ARGC=("$#")
 
 echo " +****************************************************************************+"
-echo " + Enigma 0.5                                    ###     Art-ifact      ###   +" 
+echo " + Enigma I 0.6                                  ###     Art-ifact      ###   +" 
 echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
 echo " +           KOENIG-MARTIN                    #/      ###############      \\# +"
-echo " +                                             \\   #\\##    ##^##    ##/#   /  +"
+echo " +           TESLA                             \\   #\\##    ##^##    ##/#   /  +"
 echo " +                                              ##/   \\#####/_\\#####/    \\##  +"
 echo " +                                                      \\#########/           +"
 echo " +                                                      / # # # # \\           +"
@@ -34,7 +34,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   7 lines Info , 20 lines License , 459 lines Code 
+   7 lines Info , 20 lines License , unknow lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma.sh"
 
 echo " +****************************************************************************+
@@ -46,7 +46,7 @@ MIT License
 Copyright (c) 2018-* sonar@gmx.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+of this software and associated documentation files (the \"Software\"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
@@ -54,7 +54,7 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -72,6 +72,13 @@ echo "
 #include <string>
 #include <vector>
 #include <cstring> 
+#include <openssl/rsa.h>
+#include <openssl/crypto.h>
+#include <openssl/tls1.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 #define MSGLEN ${8} 
 #define TO '${9}' 
 char s[MSGLEN]; 
@@ -83,6 +90,40 @@ const char* Versionx() {
   return \"WarGames 0.4 T.E.D. - The Enemy Dail - ENEMY-MODE\";  
 #endif 
 } 
+
+void sha256_hash_string (char hash[SHA256_DIGEST_LENGTH], char outputBuffer[65])
+{
+    int i = 0;
+
+    for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    {
+        sprintf(outputBuffer + (i * 2), \"%02x\", hash[i]);
+    }
+
+    outputBuffer[64] = 0;
+}
+
+int calc_sha256 (const char* path, char output[65])
+{
+    char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    const int bufSize = 32768;
+    void* buffer = malloc(bufSize);
+    int bytesRead = 0;
+    if(!buffer) return -1;
+    while((bytesRead = malloc(path)));
+    {
+        SHA256_Update(&sha256, path, bytesRead);
+    }
+    SHA256_Final((unsigned char*)hash, (SHA256_CTX*)&sha256);
+
+    sha256_hash_string(hash, output);
+    
+    free(buffer);
+    return 0;
+}
+
 int Modulus(int iN, int iMod) {
 	int iQ = (iN/iMod);
 	return iN - (iQ*iMod);
@@ -126,12 +167,12 @@ int matrix() {
 }
 void logo(){
 	printf(\" +****************************************************************************+\");
-	printf(\" + Enigma 0.5                                    ###     Art-ifact      ###   +\");
+	printf(\" + Enigma I 0.6                                  ###     Art-ifact      ###   +\");
 	printf(\" +                                              /   ##     #####      ##   \\\  +\");
 	printf(\" + CODENAME: T.E.D.                           #\\\     ##   #######   ##     /# +\");
 	printf(\" +           The Enemy Dail                     #     ###############     #   +\");
 	printf(\" +           KOENIG-MARTIN                    #/      ###############      \\\# +\");
-	printf(\" +                                             \\\   #\\\##    ##^##    ##/#   /  +\");
+	printf(\" +           TESLA                             \\\   #\\\##    ##^##    ##/#   /  +\");
 	printf(\" + TITLE:   KORTIN-ENIGMA V                     ##/   \\\#####/_\\\#####/    \\\##  +\");
 	printf(\" +                                                      \\\#########/           +\");
 	printf(\" +      German Enigma Simulation                        / # # # # \\\           +\");
@@ -510,20 +551,30 @@ int main(int argc, char *argv[])
                   initParams(&p); 
                   cypher(p); 
               } 
-	          if(strcmp(argv[x], \"--version\") == 0) 
-	          { 
-                  printf(\"\\tVersion\\n\\n\\t%s\\n\",Versionx()); 
-              } 
-	          if(strcmp(argv[x], \"--help\") == 0) 
-	          { 
-                  printf(\"\\tHelp\\n\\n\\t\\x1B[33m--option-1 PLUG MSG\\x1B[39m = Enigma Crack Algo from 1 1 1 to 9 9 9\\n\\t\\x1B[33m--option-2 PLUG MSG NUM NUM NUM\\x1B[39m = Enigma Crack Once Algo\\n\\t\\x1B[33m--option-3\\x1B[39m = Enigma 5 Rotor Calculator\\n\\t\\x1B[33m--version\\x1B[39m = Version\\n\\n\"); 
-              } 
+	          if(strcmp(argv[x], \"--barke\") == 0)
+	          {
+                    char calc_hash[65];
+                    std::string name1;
+                    puts (\"Please, enter a Message: \x1B[32m\");
+                    getline(cin,name1);
+                    printf(\"\x1B[39m\");
+                    calc_sha256(name1.c_str(), calc_hash);
+                    printf (\"%s - %s \\n\",name1.c_str(),calc_hash);
+              }
+	          if(strcmp(argv[x], \"--version\") == 0)
+	          {
+                  printf(\"Version\\n\\n\\t%s\\n\",Versionx());
+              }
+	          if(strcmp(argv[x], \"--help\") == 0)
+	          {
+                  printf(\"Help\n\\n\\t\\x1B[33m--option-1 PLUG MSG\\x1B[39m = Enigma Crack Algo\\n\\t\\x1B[33m--option-2 PLUG MSG NUM NUM NUM\\x1B[39m = Enigma Crack Once Algo\\n\\t\\x1B[33m--option-3\\x1B[39m = Enigma 5 Rotor Calculator\\n\\t\\x1B[33m--barke\\x1B[39m = SHA256 MSGHASH\\n\\t\\x1B[33m--version\\x1B[39m = Version\\n\\n\");
+              }
         } 
   return 0 ; 
 } 
  " > ./Enigma.cc
 
-g++ ./Enigma.cc -Wall -Wextra -pedantic -Wno-variadic-macros -DVERSION="\"Enigma 0.5 \\x1B[32mT.E.D.\\x1B[39m - \\x1B[33mThe Enemy Dail\\x1B[39m - KOENIG-MARTIN \"" -lstdc++ -o enigma 
+g++ ./Enigma.cc -Wall -Wextra -pedantic -Wno-variadic-macros -DVERSION="\"Enigma 0.5 \\x1B[32mT.E.D.\\x1B[39m - \\x1B[33mThe Enemy Dail\\x1B[39m - KOENIG-MARTIN \"" -lstdc++ -lssl -lcrypto -o enigma 
 
 mkdir -p bin
 
@@ -534,12 +585,12 @@ chmod +x bin/enigma
 rm -rf ./Enigma.cc
 	
 echo " +****************************************************************************+"
-echo " + Enigma 0.5                                    ###     Art-ifact      ###   +" 
+echo " + Enigma I 0.6                                  ###     Art-ifact      ###   +" 
 echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
 echo " +           KOENIG-MARTIN                    #/      ###############      \\# +"
-echo " +                                             \\   #\\##    ##^##    ##/#   /  +"
+echo " +           TESLA                             \\   #\\##    ##^##    ##/#   /  +"
 echo " +                                              ##/   \\#####/_\\#####/    \\##  +"
 echo " +                                                      \\#########/           +"
 echo " +                                                      / # # # # \\           +"
