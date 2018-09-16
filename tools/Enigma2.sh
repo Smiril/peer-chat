@@ -43,9 +43,7 @@ echo " +************************************************************************
 
 echo "
 MIT License
-
 Copyright (c) 2018-* sonar@gmx.com
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the \"Software\"), to deal
 in the Software without restriction, including without limitation the rights
@@ -54,7 +52,6 @@ copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -82,16 +79,12 @@ echo "
 #include <cuda.h>
 #include <device_functions.h>
 #define word const char
-
 __device__ inline word f1( word x, word y, word z) { return ( ( x & y ) | ( ~x & z ) ); }
 __device__ inline word f2( word x, word y, word z) { return ( x ^ y ^ z ); }
 __device__ inline word f3( word x, word y, word z) { return ( ( x & y ) | ( x & z ) | ( y & z ) ); }
 __device__ inline word f4( word x, word y, word z) { return ( x ^ y ^ z ); } 
-
 __shared__ word * hash;
-
 /* SHA256 init values */
-
 __constant__ word I1 = 0x6a09e667;
 __constant__ word I2 = 0xbb67ae85;
 __constant__ word I3 = 0x3c6ef372;
@@ -100,9 +93,7 @@ __constant__ word I5 = 0x510e527f;
 __constant__ word I6 = 0x9b05688c;
 __constant__ word I7 = 0x1f83d9ab;
 __constant__ word I8 = 0x5be0cd19;
-
 /* SHA256 constants */
-
 __constant__ word C1 = 0x428a2f98;
 __constant__ word C2 = 0x71374491;
 __constant__ word C3 = 0xb5c0fbcf;
@@ -167,25 +158,18 @@ __constant__ word C61 = 0x90befffa;
 __constant__ word C62 = 0xa4506ceb;
 __constant__ word C63 = 0xbef9a3f7;
 __constant__ word C64 = 0xc67178f2;
-
 /* 32-bit rotate */
-
 __device__ inline word ROT(word x,int n){ return ( ( x << n ) | ( x >> ( 32 - n ) ) ); }
-
 #define CALC(n,i) temp =  ROT ( A , 5 ) + f##n( B , C, D ) +  W[i] + E + C##n  ; E = D; D = C; C = ROT ( B , 30 ); B = A; A = temp
-
 #define CHUNK_SIZE 64
 #define TOTAL_LEN_LEN 8
-
 /*
  * ABOUT bool: this file does not use bool in order to be as pre-C99 compatible as possible.
  */
-
 /*
  * Comments from pseudo-code at https://en.wikipedia.org/wiki/SHA-2 are reproduced here.
  * When useful for clarification, portions of the pseudo-code are reproduced here too.
  */
-
 /*
  * Initialize array of round constants:
  * (first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311):
@@ -200,7 +184,6 @@ __constant__ static const uint32_t k[] = {
 	0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
-
 struct buffer_state {
 	const uint8_t * p;
 	size_t len;
@@ -208,7 +191,6 @@ struct buffer_state {
 	int single_one_delivered; /* bool */
 	int total_len_delivered; /* bool */
 };
-
 __device__ static inline uint32_t right_rot(uint32_t value, unsigned int count)
 {
 	/*
@@ -217,7 +199,6 @@ __device__ static inline uint32_t right_rot(uint32_t value, unsigned int count)
 	 */
 	return value >> count | value << (32 - count);
 }
-
 static void init_buf_state(struct buffer_state * state, const uint8_t * input, size_t len)
 {
 	state->p = input;
@@ -226,36 +207,30 @@ static void init_buf_state(struct buffer_state * state, const uint8_t * input, s
 	state->single_one_delivered = 0;
 	state->total_len_delivered = 0;
 }
-
 /* Return value: bool */
 __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state * state)
 {
 	size_t space_in_chunk;
-
 	if (state->total_len_delivered) {
 		return 0;
 	}
-
 	if (state->len >= CHUNK_SIZE) {
 		memcpy(chunk, state->p, CHUNK_SIZE);
 		state->p += CHUNK_SIZE;
 		state->len -= CHUNK_SIZE;
 		return 1;
 	}
-
 	memcpy(chunk, state->p, state->len);
 	chunk += state->len;
 	space_in_chunk = CHUNK_SIZE - state->len;
 	state->p += state->len;
 	state->len = 0;
-
 	/* If we are here, space_in_chunk is one at minimum. */
 	if (!state->single_one_delivered) {
 		*chunk++ = 0x80;
 		space_in_chunk -= 1;
 		state->single_one_delivered = 1;
 	}
-
 	/*
 	 * Now:
 	 * - either there is enough space left for the total length, and we can conclude,
@@ -268,7 +243,6 @@ __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state 
 		int i;
 		memset(chunk, 0x00, left);
 		chunk += left;
-
 		/* Storing of len * 8 as a big endian 64-bit without overflow. */
 		chunk[7] = (uint8_t) (len << 3);
 		len >>= 5;
@@ -280,17 +254,12 @@ __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state 
 	} else {
 		memset(chunk, 0x00, space_in_chunk);
 	}
-
 	return 1;
 }
-
 #define MSGLEN ${8}
 #define TO '${9}'
-
 char s[MSGLEN];
-
 using namespace std;
-
 const char* Versionx() {
 #ifdef VERSION
   return VERSION;
@@ -298,20 +267,15 @@ const char* Versionx() {
   return \"WarGames 0.4 T.E.D. - The Enemy Dail - ENEMY-MODE\";
 #endif
 }
-
-
 void sha256_hash_string (char hash[SHA256_DIGEST_LENGTH], char outputBuffer[65])
 {
     int i = 0;
-
     for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
     {
         sprintf(outputBuffer + (i * 2), \"%02x\", hash[i]);
     }
-
     outputBuffer[64] = 0;
 }
-
 __device__ int barke_sha256 (const char* path, char output[65])
 {
     char hash[SHA256_DIGEST_LENGTH];
@@ -324,7 +288,6 @@ __device__ int barke_sha256 (const char* path, char output[65])
     
     return 0;
 }
-
 __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len)
 {
 	/*
@@ -335,21 +298,16 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 	 *     and when parsing message block data from bytes to words, for example,
 	 *     the first word of the input message \"abc\" after padding is 0x61626380
 	 */
-
 	/*
 	 * Initialize hash values:
 	 * (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19):
 	 */
 	uint32_t h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 	int i, j;
-
 	/* 512-bit chunks is what we will operate on. */
 	uint8_t chunk[64];
-
 	struct buffer_state state;
-
 	init_buf_state(&state, input, len);
-
 	while (calc_chunk(chunk, &state)) {
 		uint32_t ah[8];
 		
@@ -360,14 +318,12 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 		 */
 		uint32_t w[64];
 		const uint8_t *p = chunk;
-
 		memset(w, 0x00, sizeof w);
 		for (i = 0; i < 16; i++) {
 			w[i] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
 				(uint32_t) p[2] << 8 | (uint32_t) p[3];
 			p += 4;
 		}
-
 		/* Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array: */
 		for (i = 16; i < 64; i++) {
 			const uint32_t s0 = right_rot(w[i - 15], 7) ^ right_rot(w[i - 15], 18) ^ (w[i - 15] >> 3);
@@ -378,7 +334,6 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 		/* Initialize working variables to current hash value: */
 		for (i = 0; i < 8; i++)
 			ah[i] = h[i];
-
 		/* Compression function main loop: */
 		for (i = 0; i < 64; i++) {
 			const uint32_t s1 = right_rot(ah[4], 6) ^ right_rot(ah[4], 11) ^ right_rot(ah[4], 25);
@@ -387,7 +342,6 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 			const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
 			const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
 			const uint32_t temp2 = s0 + maj;
-
 			ah[7] = ah[6];
 			ah[6] = ah[5];
 			ah[5] = ah[4];
@@ -397,12 +351,10 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 			ah[1] = ah[0];
 			ah[0] = temp1 + temp2;
 		}
-
 		/* Add the compressed chunk to the current hash value: */
 		for (i = 0; i < 8; i++)
 			h[i] += ah[i];
 	}
-
 	/* Produce the final hash value (big-endian): */
 	for (i = 0, j = 0; i < 8; i++)
 	{
@@ -412,7 +364,6 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 		hash[j++] = (uint8_t) h[i];
 	}
 }
-
 /* Rotor wirings */
 __constant__ std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 	/* 1: */ \"${1}\", 
@@ -422,9 +373,7 @@ __constant__ std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 	/* 5: */ \"${5}\"};
 __constant__ std::string ref=\"${6}\"; 
 __constant__ std::string notch=\"${7}\"; 
-
 /* Encryption parameters follow */
-
 typedef struct P
 {
   char order[3];/*={ 1, 2, 3 };*/
@@ -432,14 +381,12 @@ typedef struct P
   char pos[3];/*={ 'A','A','A' };*/
   char plug[10];/*=\"AMTE\";*/
 } Params;
-
 /*take a char and return its encoded version according to the 
   encryption params, update params, i.e. advance wheels
   this part uses Fauzan Mirza's code*/
 __device__ char scramble(char c, Params *p)
 {
   int i, j, flag = 0;
-
 		c=toupper(c);
 		if (!isalpha(c))
 			return -1;
@@ -448,7 +395,6 @@ __device__ char scramble(char c, Params *p)
 		p->pos[0]++;
 		if (p->pos[0]>'Z')
 			p->pos[0] -= 26;
-
 		/* Check if second rotor reached notch last time */
 		if (flag)
 		{
@@ -461,7 +407,6 @@ __device__ char scramble(char c, Params *p)
 				p->pos[2] -= 26;
 			flag=0;
 		}
-
 		/*  Step up second rotor if first rotor reached notch */
 		if (p->pos[0]==notch[p->order[0]-1])
 		{
@@ -472,7 +417,6 @@ __device__ char scramble(char c, Params *p)
 			if (p->pos[1]==notch[p->order[1]-1])
 				flag=1;
 		}
-
 		/*  Swap pairs of letters on the plugboard */
 		for (i=0; p->plug[i]; i+=2)
 		{
@@ -481,52 +425,41 @@ __device__ char scramble(char c, Params *p)
 			else if (c==p->plug[i+1])
 				c=p->plug[i];
 		}
-
 		/*  Rotors (forward) */
 		for (i=0; i<3; i++)
 		{
 			c += p->pos[i]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->rings[i]-'A';
 			if (c<'A')
 				c += 26;
-
 			c=rotor[p->order[i]-1][c-'A'];
-
 			c += p->rings[i]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->pos[i]-'A';
 			if (c<'A')
 				c += 26;
 		}
-
 		/*  Reflecting rotor */
 		c=ref[c-'A'];
-
 		/*  Rotors (reverse) */
 		for (i=3; i; i--)
 		{
 			c += p->pos[i-1]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->rings[i-1]-'A';
 			if (c<'A')
 				c += 26;
-
 			for (j=0; j<26; j++)
 				if (rotor[p->order[i-1]-1][j]==c)
 					break;
 			c=j+'A';
-
 			c += p->rings[i-1]-'A';
 			if (c>'Z')
 				c -= 26;
-
 			c -= p->pos[i-1]-'A';
 			if (c<'A')
 				c += 26;
@@ -540,10 +473,8 @@ __device__ char scramble(char c, Params *p)
 			else if (c==p->plug[i+1])
 				c=p->plug[i];
 		}
-
   return c;
 }
-
 /*take a string, return encoded string*/
 char *enigma(char *in, Params *p)
 {
@@ -553,13 +484,11 @@ char *enigma(char *in, Params *p)
   s[j] = '\0';
   return s;
 }
-
 /*read in a string, and pass it through enigma*/
 void cypher(Params p)
 {
   char in[MSGLEN];//, s[MSGLEN];
   int c, i = 0;
-
   while((c = getchar()) != '\n')
   {
     in[i] = toupper(c);
@@ -569,12 +498,10 @@ void cypher(Params p)
   //strcpy(s, enigma(in, &p));
   printf(\"%s\\n%s\\n\", enigma(in, &p), in);
 }
-
 /*given a cipher text, and a crib, test all possible settings of wheel order a, b, c*/
 __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 {
   Params p;
-
   p.order[0] = a;
   p.order[1] = b;
   p.order[2] = c;
@@ -594,7 +521,6 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
             {
 	      Params cp = p;
 	      unsigned int i = 0;
-
 	      while(sizeof(crib) > i)
 	      {
 		if(cyph[i] != scramble(crib[i], &cp)){
@@ -607,7 +533,6 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
 	      if(sizeof(crib) == i)
 	      {
 		//char s[MSGLEN];
-
 		(*ct)++;
 	        printf(\"Wheels %d %d %d Start %c %c %c Rings %c %c %c Stecker \\\"%s\\\"\\n\",
                         p.order[0], p.order[1], p.order[2], 
@@ -625,14 +550,12 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
   }
   return 0;
 }
-
 /*do the whole check including steckering of up to two pairs of letters*/
 __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
   char A, B, C, D;
   int i = 0, cs;
   char s[5];
-
   strcpy(s, cyph);
   printf(\"Checking wheels %d %d %d\\n\",  a, b, c);
   for(cs = 0; cs < 3; cs++)
@@ -661,7 +584,6 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 		s[3] = D;
 		s[4] = '\0';
              float progress1 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
-
              if(rotate(a, b, c, cyph, crib, s, ct)==0){
                 printf(\" Progress: %d of Combinations done.\\n\",(int) progress1);
               }
@@ -671,7 +593,6 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 	  }
 	  else{
 	    float progress2 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
-
 	    if(rotate(a, b, c, cyph, crib, s, ct)==0){
 	     	printf(\" Progress: %d of Combinations done.\\n\",(int) progress2);
         	}
@@ -681,7 +602,6 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
     }
     else{
     float progress3 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
-
     if(rotate(a, b, c, cyph, crib, s, ct)==0){
      	printf(\" Progress: %d of Combinations done.\\n\",(int) progress3);
      	}
@@ -689,8 +609,6 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
   }
   return 0;
 }
-
-
 /*run on all permutations of wheels a, b, c*/
 __device__ void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
@@ -701,14 +619,11 @@ __device__ void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
   test(c, a, b, cyph, crib, ct);
   test(c, b, a, cyph, crib, ct);
 }
-
 /*all triples of five possible wheels*/
 __device__ void permuteAll(char *cyph, char *crib)
 {
   int ct = 0;
   std::string d,e,f;
-
-
   for(int d = 1;d<=9;d++){
 	  for(int e = 1;e<=9;e++){
 		  for(int f = 1;f<=9;f++){
@@ -718,7 +633,6 @@ __device__ void permuteAll(char *cyph, char *crib)
   }
 printf(\"\\nFound %d solutions.\\n\", ct);
 }
-
 /*once triples of five possible wheels*/
 __device__ void permuteOnce(char *cyph, char *crib,int d,int e,int f)
 {
@@ -726,23 +640,19 @@ __device__ void permuteOnce(char *cyph, char *crib,int d,int e,int f)
   permute(d, e, f, cyph, crib, &ct);
   printf(\"\\nFound %d solutions.\\n\", (int)ct);
 }
-
 /*helper to read a character*/
 char readCh()
 {
   char c, ret;
-
   while((c = getchar()) != '\n')
   ret = c;
   return ret;
 }
-
 /*init the starting position*/
 void initParams(Params *p)
 {
   int i;
   char c;
-
   printf(\"d)efault or u)ser: \");
   c = readCh();
   if(c != 'u')
@@ -786,8 +696,72 @@ void initParams(Params *p)
          p->pos[0], p->pos[1], p->pos[2],
          p->rings[0], p->rings[1], p->rings[2], p->plug);
 }
+void startonce(word * hash_tmp, word * crib,int d , int e , int f, word * res)
+{
+    unsigned char * buffer = 0;
+    unsigned char * buffer_fill = 0x0;
+    cudaMalloc((void**)&buffer,10 * sizeof(buffer));
+    cudaMalloc((void**)&hash,5 * sizeof(hash));
+    cudaMalloc((void**)&res,10 * sizeof(res));
 
-void start(word * hash_tmp,  word * length, const char * res)
+    for(int i = 0; i < 10; i++)
+        buffer_fill[i] = 0x0; 
+    
+    
+    cudaMemcpy ((void*)hash, hash_tmp,sizeof(hash_tmp),cudaMemcpyHostToDevice);
+    cudaMemcpy (buffer, buffer_fill,sizeof(buffer_fill),cudaMemcpyHostToDevice);
+    
+    // Call actual brute force kernel-function with 
+    // - blocks: count of possible chars squared
+    // - threads: possible chars
+   
+    permuteOnce<<<9025,95>>>(hash,crib,d,e,f);
+
+    cudaMemcpy((void*)res, (const void*)buffer, sizeof(buffer),cudaMemcpyDeviceToHost);
+    //cudaMemcpy(debug, hash, 5 * sizeof(word), cudaMemcpyDeviceToHost);
+
+    cudaError_t err1 = cudaGetLastError();
+    if( cudaSuccess != err1) 
+        printf( \"Cuda error: %s.\\n\",  cudaGetErrorString(err1) );
+
+    cudaFree((void*)buffer);
+    cudaFree((void*)hash);
+}
+
+void startAll(word * hash_tmp,  word * crib, word * res)
+{
+    unsigned char * buffer = 0;
+    unsigned char * buffer_fill = 0x0;
+    cudaMalloc((void**)&buffer,10 * sizeof(buffer));
+    cudaMalloc((void**)&hash,5 * sizeof(hash));
+    cudaMalloc((void**)&res,10 * sizeof(res));
+    
+
+    for(int i = 0; i < 10; i++)
+        buffer_fill[i] = 0x0; 
+    
+    
+    cudaMemcpy ((void*)hash, hash_tmp,sizeof(hash_tmp),cudaMemcpyHostToDevice);
+    cudaMemcpy (buffer, buffer_fill,sizeof(buffer_fill),cudaMemcpyHostToDevice);
+    
+    // Call actual brute force kernel-function with 
+    // - blocks: count of possible chars squared
+    // - threads: possible chars
+   
+    permuteAll<<<9025,95>>>(hash, crib);
+
+    cudaMemcpy((void*)res, (const void*)buffer, sizeof(buffer),cudaMemcpyDeviceToHost);
+    //cudaMemcpy(debug, hash, 5 * sizeof(word), cudaMemcpyDeviceToHost);
+
+    cudaError_t err1 = cudaGetLastError();
+    if( cudaSuccess != err1) 
+        printf( \"Cuda error: %s.\\n\",  cudaGetErrorString(err1) );
+
+    cudaFree((void*)buffer);
+    cudaFree((void*)hash);
+}
+
+void start(word * hash_tmp,  word * length, word * res)
 {
     unsigned char * buffer = 0;
     unsigned char * buffer_fill = 0x0;
@@ -826,7 +800,6 @@ __global__ void smash(int length, char * buffer, word * hash)
     int lower = 32;
     char *input_cpy = 0;
     int carry = 1;
-
     // load into register
     h0 = hash[0];
     h1 = hash[1];
@@ -836,22 +809,18 @@ __global__ void smash(int length, char * buffer, word * hash)
     h5 = hash[5];
     h6 = hash[6];
     h7 = hash[7];
-
     if(length > 3)
        for(int i = 3; i < 10; i++)
            input_cpy[i] = lower;
        
-
     // init input_cpy
     input_cpy[0] = threadIdx.x + lower;
     if(length > 1)
         input_cpy[1] = (blockIdx.x / 95) + lower;
             if(length > 2)
 	    		input_cpy[2] = (blockIdx.x % 95) + lower;
-
     // Length for carry flag (break) if length < 3
     short int s = length < 3 ? length : 3;
-
     // value @length as a flag.
     //if (s != nullptr)
     for(int i = length; i < 10; i++)
@@ -875,7 +844,6 @@ __global__ void smash(int length, char * buffer, word * hash)
 				(uint32_t) p[2] << 8 | (uint32_t) p[3];
 			p += 4;
 		}
-
 		/* Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array: */
 		for (i = 16; i < 64; i++) {
 			const uint32_t s0 = right_rot(w[i - 15], 7) ^ right_rot(w[i - 15], 18) ^ (w[i - 15] >> 3);
@@ -886,7 +854,6 @@ __global__ void smash(int length, char * buffer, word * hash)
 		/* Initialize working variables to current hash value: */
 		for (i = 0; i < 8; i++)
 			ah[i] = h[i];
-
 		/* Compression function main loop: */
 		for (i = 0; i < 64; i++) {
 			const uint32_t s1 = right_rot(ah[4], 6) ^ right_rot(ah[4], 11) ^ right_rot(ah[4], 25);
@@ -895,7 +862,6 @@ __global__ void smash(int length, char * buffer, word * hash)
 			const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
 			const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
 			const uint32_t temp2 = s0 + maj;
-
 			ah[7] = ah[6];
 			ah[6] = ah[5];
 			ah[5] = ah[4];
@@ -905,12 +871,10 @@ __global__ void smash(int length, char * buffer, word * hash)
 			ah[1] = ah[0];
 			ah[0] = temp1 + temp2;
 		}
-
 		/* Add the compressed chunk to the current hash value: */
 		for (i = 0; i < 8; i++)
 			h[i] += ah[i];
 	}
-
 	/* Produce the final hash value (big-endian): */
 	for (i = 0, j = 0; i < 8; i++)
 	{
@@ -925,7 +889,6 @@ __global__ void smash(int length, char * buffer, word * hash)
         
         
         A = I1;    B = I2;    C = I3;    D = I4;    E = I5;
-
         CALC(1,0);  CALC(1,1);  CALC(1,2);  CALC(1,3);  CALC(1,4);
         CALC(1,5);  CALC(1,6);  CALC(1,7);  CALC(1,8);  CALC(1,9);
         CALC(1,10); CALC(1,11); CALC(1,12); CALC(1,13); CALC(1,14);
@@ -955,7 +918,6 @@ __global__ void smash(int length, char * buffer, word * hash)
         tmp6 = F + I6;
         tmp7 = G + I7;
         tmp8 = H + I8;
-
         // if result was found, cpy to buffer
         if( tmp1 == h0 && 
             tmp2 == h1 &&
@@ -997,28 +959,19 @@ __global__ void smash(int length, char * buffer, word * hash)
             } else 
                 break;
         }
-
         carry = 1;
-
     }
-
 }
-
-
 /*
  * device function __device__ void memInit(uint, uchar, int)
  * 
  * Prepare word for sha-256 (expand, add length etc)
 */
-
-
 __device__ void memInit(word * tmp, unsigned char input[], int length)
 {
-
     int stop = 0;
     // reseting tmp
     for(int i = 0; i < 80; i++) tmp[i] = 0;
-
     // fill tmp like: message char c0,c1,c2,...,cn,10000000,00...000
     for(int i = 0; i < length; i+=4)
     {
@@ -1037,30 +990,31 @@ __device__ void memInit(word * tmp, unsigned char input[], int length)
     // Adding length as last value
     tmp[15] |= length * 8;
 }
-
 /********************************************MAIN*********************************************/
 int main(int argc, char *argv[])
 {
   Params p;
   int x;
-  const char *resx;
+  char *resx;
 
-	if(argc == 1){ /*main case*/
+    if(argc == 1){ /*main case*/
 		printf(\"Option usage: %s --help\\n\",argv[0]);
 		exit(1);
 	}
-
+	
 	for(x=0; x<argc; x++) /*bombe case*/
 	{
 	          if(strcmp(argv[x], \"--option-1\") == 0)
 	          {
                   printf(\"Option 1\\n\");
-                  permuteAll(argv[x + 1], argv[x + 2]);
+                  startAll((char *)argv[x + 1],  (char *)argv[x + 2], resx);
+                  printf(\"%s\\n\",resx);
               }
 		if(strcmp(argv[x], \"--option-2\") == 0)
 	          {
                   printf(\"Option 2\\n\");
-                  permuteOnce(argv[x + 1], argv[x + 2], atoi(argv[x + 3]), atoi(argv[x + 4]), atoi(argv[x + 5]));
+                  startonce((char *)argv[x + 1], (char *)argv[x + 2], atoi(argv[x + 3]), atoi(argv[x + 4]), atoi(argv[x + 5]),resx);
+                  printf(\"%s\\n\",resx);
               }
 	          if(strcmp(argv[x], \"--option-3\") == 0)
 	          {
@@ -1072,16 +1026,18 @@ int main(int argc, char *argv[])
 	          {
                   printf(\"Option 4\\n\");
                   start(argv[x + 1], argv[x + 2],resx);
+                  printf(\"%s\\n\",resx);
               }
 	          if(strcmp(argv[x], \"--barke\") == 0)
 	          {
+                    printf(\"Barke\\n\");
                     char calc_hash[65];
                     std::string name1;
                     puts (\"Please, enter a Message: \");
                     getline(cin,name1);
-                    printf("");
+                    printf(\"\\n\");
                     barke_sha256(name1.c_str(), calc_hash);
-                    printf (\"%s - %s \\n\",name1.c_str(),calc_hash);
+                    printf (\"%s - %s \n\",name1.c_str(),calc_hash);
               }
 	          if(strcmp(argv[x], \"--version\") == 0)
 	          {
@@ -1094,7 +1050,6 @@ int main(int argc, char *argv[])
         }
   return 0 ;
 }
-
  " > ./main.cu
 
 /usr/local/cuda-9.2/bin/nvcc main.cu -x cu -DVERSION="\"Enigma II 0.6 CUDA T.E.D. - The Enemy Dail - KOENIG-MARTIN - TESLA\"" -lssl -lcrypto -lpthread -lstdc++ -o enigma-cuda -I/usr/local/cuda-9.2/include
