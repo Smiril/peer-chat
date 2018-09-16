@@ -84,80 +84,6 @@ __device__ inline word f2( word x, word y, word z) { return ( x ^ y ^ z ); }
 __device__ inline word f3( word x, word y, word z) { return ( ( x & y ) | ( x & z ) | ( y & z ) ); }
 __device__ inline word f4( word x, word y, word z) { return ( x ^ y ^ z ); } 
 __shared__ word * hash;
-/* SHA256 init values */
-__constant__ word I1 = 0x6a09e667;
-__constant__ word I2 = 0xbb67ae85;
-__constant__ word I3 = 0x3c6ef372;
-__constant__ word I4 = 0xa54ff53a;
-__constant__ word I5 = 0x510e527f;
-__constant__ word I6 = 0x9b05688c;
-__constant__ word I7 = 0x1f83d9ab;
-__constant__ word I8 = 0x5be0cd19;
-/* SHA256 constants */
-__constant__ word C1 = 0x428a2f98;
-__constant__ word C2 = 0x71374491;
-__constant__ word C3 = 0xb5c0fbcf;
-__constant__ word C4 = 0xe9b5dba5;
-__constant__ word C5 = 0x3956c25b;
-__constant__ word C6 = 0x59f111f1;
-__constant__ word C7 = 0x923f82a4;
-__constant__ word C8 = 0xab1c5ed5;
-__constant__ word C9 = 0xd807aa98;
-__constant__ word C10 = 0x12835b01;
-__constant__ word C11 = 0x243185be;
-__constant__ word C12 = 0x550c7dc3;
-__constant__ word C13 = 0x72be5d74;
-__constant__ word C14 = 0x80deb1fe;
-__constant__ word C15 = 0x9bdc06a7;
-__constant__ word C16 = 0xc19bf174;
-__constant__ word C17 = 0xe49b69c1;
-__constant__ word C18 = 0xefbe4786;
-__constant__ word C19 = 0x0fc19dc6;
-__constant__ word C20 = 0x240ca1cc;
-__constant__ word C21 = 0x2de92c6f;
-__constant__ word C22 = 0x4a7484aa;
-__constant__ word C23 = 0x5cb0a9dc;
-__constant__ word C24 = 0x76f988da;
-__constant__ word C25 = 0x983e5152;
-__constant__ word C26 = 0xa831c66d;
-__constant__ word C27 = 0xb00327c8;
-__constant__ word C28 = 0xbf597fc7;
-__constant__ word C29 = 0xc6e00bf3;
-__constant__ word C30 = 0xd5a79147;
-__constant__ word C31 = 0x06ca6351;
-__constant__ word C32 = 0x14292967;
-__constant__ word C33 = 0x27b70a85;
-__constant__ word C34 = 0x2e1b2138;
-__constant__ word C35 = 0x4d2c6dfc;
-__constant__ word C36 = 0x53380d13;
-__constant__ word C37 = 0x650a7354;
-__constant__ word C38 = 0x766a0abb;
-__constant__ word C39 = 0x81c2c92e;
-__constant__ word C40 = 0x92722c85;
-__constant__ word C41 = 0xa2bfe8a1;
-__constant__ word C42 = 0xa81a664b;
-__constant__ word C43 = 0xc24b8b70;
-__constant__ word C44 = 0xc76c51a3;
-__constant__ word C45 = 0xd192e819;
-__constant__ word C46 = 0xd6990624;
-__constant__ word C47 = 0xf40e3585;
-__constant__ word C48 = 0x106aa070;
-__constant__ word C49 = 0x19a4c116;
-__constant__ word C50 = 0x1e376c08;
-__constant__ word C51 = 0x2748774c;
-__constant__ word C52 = 0x34b0bcb5;
-__constant__ word C53 = 0x391c0cb3;
-__constant__ word C54 = 0x4ed8aa4a;
-__constant__ word C55 = 0x5b9cca4f;
-__constant__ word C56 = 0x682e6ff3;
-__constant__ word C57 = 0x748f82ee;
-__constant__ word C58 = 0x78a5636f;
-__constant__ word C59 = 0x84c87814;
-__constant__ word C60 = 0x8cc70208;
-__constant__ word C61 = 0x90befffa;
-__constant__ word C62 = 0xa4506ceb;
-__constant__ word C63 = 0xbef9a3f7;
-__constant__ word C64 = 0xc67178f2;
 /* 32-bit rotate */
 __device__ inline word ROT(word x,int n){ return ( ( x << n ) | ( x >> ( 32 - n ) ) ); }
 #define CALC(n,i) temp =  ROT ( A , 5 ) + f##n( B , C, D ) +  W[i] + E + C##n  ; E = D; D = C; C = ROT ( B , 30 ); B = A; A = temp
@@ -762,13 +688,30 @@ __device__ void memInit(word * tmp, char input[], int length)
     tmp[15] |= length * 8;
 }
 
-__global__ void smash(int length, char * buffer, word * hash)
+__global__ void smash(size_t length, char * buffer, word * hash)
 {
     word h0,h1,h2,h3,h4,h5,h6,h7;
     int higher = 126;
     int lower = 32;
     char *input_cpy = 0;
     int carry = 1;
+/* SHA256 init values */
+
+int I1 = 0x6a09e667;
+int I2 = 0xbb67ae85;
+int I3 = 0x3c6ef372;
+int I4 = 0xa54ff53a;
+int I5 = 0x510e527f;
+int I6 = 0x9b05688c;
+int I7 = 0x1f83d9ab;
+int I8 = 0x5be0cd19;
+
+/* SHA256 constants */
+
+int C1 = 0x428a2f98;
+int C2 = 0x71374491;
+int C3 = 0xb5c0fbcf;
+int C4 = 0xe9b5dba5;
 
     // load into register
     h0 = hash[0];
@@ -1019,7 +962,7 @@ void start(word * hash_tmp,  word * length, word * res)
     // - blocks: count of possible chars squared
     // - threads: possible chars
    
-    smash<<<9025,95>>>((int)length, buffer, hash);
+    smash<<<9025,95>>>(sizeof(length), buffer, hash);
 
     cudaMemcpy((void*)res, (const void*)buffer, sizeof(buffer),cudaMemcpyDeviceToHost);
     //cudaMemcpy(debug, hash, 5 * sizeof(word), cudaMemcpyDeviceToHost);
@@ -1128,3 +1071,4 @@ rm -rf ./LICENSE
 enigma-cuda --version
 
 exit 0
+
