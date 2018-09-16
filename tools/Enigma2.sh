@@ -4,7 +4,7 @@ ARGV=("$@")
 ARGC=("$#")
 
 echo " +****************************************************************************+"
-echo " + Enigma I 0.6                                  ###     Art-ifact      ###   +" 
+echo " + Enigma II 0.6                                 ###     Art-ifact      ###   +" 
 echo " + CODENAME:                                    /   ##     #####      ##   \\  +"
 echo " +           T.E.D.                           #\\     ##   #######   ##     /# +"
 echo " +           The Enemy Dail                     #     ###############     #   +"
