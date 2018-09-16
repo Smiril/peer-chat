@@ -25,7 +25,7 @@ if [ "$#" -ne 9 ]; then
     exit 0
 fi
 
-sudo zypper install at-spi2-atk-common at-spi2-atk-gtk2 gtk2-data gtk2-devel gtk2-immodule-amharic gtk2-immodule-inuktitut gtk2-metatheme-adwaita gtk2-tools patterns-openSUSE-base patterns-openSUSE-devel_basis patterns-openSUSE-devel_C_C++ git
+sudo zypper install at-spi2-atk-common at-spi2-atk-gtk2 gtk2-data gtk2-devel libopenssl-devel gtk2-immodule-amharic gtk2-immodule-inuktitut gtk2-metatheme-adwaita gtk2-tools patterns-openSUSE-base patterns-openSUSE-devel_basis patterns-openSUSE-devel_C_C++ git
 
 echo " +****************************************************************************+ 
    enigma simulation , main and bombe, sonar@gmx.com, july 2018
