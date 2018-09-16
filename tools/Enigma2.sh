@@ -214,7 +214,8 @@ __device__ int barke_sha256 (const char* path, char output[65])
     
     return 0;
 }
-__device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len)
+
+__device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 {
 	/*
 	 * Note 1: All integers (expect indexes) are 32-bit unsigned integers and addition is calculated modulo 2^32.
@@ -222,18 +223,23 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 	 * Note 3: The compression function uses 8 working variables, a through h
 	 * Note 4: Big-endian convention is used when expressing the constants in this pseudocode,
 	 *     and when parsing message block data from bytes to words, for example,
-	 *     the first word of the input message \"abc\" after padding is 0x61626380
+	 *     the first word of the input message "abc" after padding is 0x61626380
 	 */
+
 	/*
 	 * Initialize hash values:
 	 * (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19):
 	 */
 	uint32_t h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 	int i, j;
+
 	/* 512-bit chunks is what we will operate on. */
-	uint8_t chunk[64];
+	word chunk[64];
+
 	struct buffer_state state;
+
 	init_buf_state(&state, input, len);
+
 	while (calc_chunk(chunk, &state)) {
 		uint32_t ah[8];
 		
@@ -243,13 +249,15 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 		 * copy chunk into first 16 words w[0..15] of the message schedule array
 		 */
 		uint32_t w[64];
-		const uint8_t *p = chunk;
+		word *p = chunk;
+
 		memset(w, 0x00, sizeof w);
 		for (i = 0; i < 16; i++) {
 			w[i] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
 				(uint32_t) p[2] << 8 | (uint32_t) p[3];
 			p += 4;
 		}
+
 		/* Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array: */
 		for (i = 16; i < 64; i++) {
 			const uint32_t s0 = right_rot(w[i - 15], 7) ^ right_rot(w[i - 15], 18) ^ (w[i - 15] >> 3);
@@ -260,6 +268,7 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 		/* Initialize working variables to current hash value: */
 		for (i = 0; i < 8; i++)
 			ah[i] = h[i];
+
 		/* Compression function main loop: */
 		for (i = 0; i < 64; i++) {
 			const uint32_t s1 = right_rot(ah[4], 6) ^ right_rot(ah[4], 11) ^ right_rot(ah[4], 25);
@@ -268,6 +277,7 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 			const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
 			const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
 			const uint32_t temp2 = s0 + maj;
+
 			ah[7] = ah[6];
 			ah[6] = ah[5];
 			ah[5] = ah[4];
@@ -277,17 +287,19 @@ __device__ void calc_sha_256(uint8_t hash[32], const uint8_t * input, size_t len
 			ah[1] = ah[0];
 			ah[0] = temp1 + temp2;
 		}
+
 		/* Add the compressed chunk to the current hash value: */
 		for (i = 0; i < 8; i++)
 			h[i] += ah[i];
 	}
+
 	/* Produce the final hash value (big-endian): */
 	for (i = 0, j = 0; i < 8; i++)
 	{
-		hash[j++] = (uint8_t) (h[i] >> 24);
-		hash[j++] = (uint8_t) (h[i] >> 16);
-		hash[j++] = (uint8_t) (h[i] >> 8);
-		hash[j++] = (uint8_t) h[i];
+		hash[j++] = (word *) (h[i] >> 24);
+		hash[j++] = (word *) (h[i] >> 16);
+		hash[j++] = (word *) (h[i] >> 8);
+		hash[j++] = (word *) h[i];
 	}
 }
 /* Rotor wirings */
