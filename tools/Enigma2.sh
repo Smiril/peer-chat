@@ -284,8 +284,8 @@ __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state 
 	return 1;
 }
 
-#define MSGLEN 80
-#define TO 'E'
+#define MSGLEN ${8}
+#define TO '${9}'
 
 char s[MSGLEN];
 
