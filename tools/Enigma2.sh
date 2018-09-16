@@ -1135,6 +1135,6 @@ cat ./LICENSE
 
 rm -rf ./LICENSE
 
-enigma --version
+enigma-cuda --version
 
 exit 0
