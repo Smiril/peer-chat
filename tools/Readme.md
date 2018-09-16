@@ -23,7 +23,7 @@ A Linux BASH Script who operate with MYSQL and nmap PortScanner. For CRON usage.
 
 A Linux BASH Script who operate with MYSQL and nmap scanned Report. For MANUAL usage.
 
-* **[Enigma1.sh](Enigma1.sh)** **[Enigma2.sh](Enigma2.sh)** **[ScreenShot](Enigma.png)**
+* **[Enigma I](Enigma1.sh)** **[Enigma II](Enigma2.sh)** **[ScreenShot](Enigma.png)**
 
 A Linux C++ Enigma Simulator
 
