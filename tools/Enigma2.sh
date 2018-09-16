@@ -317,19 +317,11 @@ __device__ int barke_sha256 (const char* path, char output[65])
     char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
-    const int bufSize = 32768;
-    void* buffer = malloc(bufSize);
-    int bytesRead = 0;
-    if(!buffer) return -1;
-    while((bytesRead != 0));
-    {
-        SHA256_Update(&sha256, path, bytesRead);
-    }
+    SHA256_Update(&sha256, path, sizeof(path));
     SHA256_Final((unsigned char*)hash, (SHA256_CTX*)&sha256);
 
     sha256_hash_string(hash, output);
     
-    free(buffer);
     return 0;
 }
 
