@@ -35,7 +35,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   8 lines Info , 20 lines License , 986 lines Code 
+   8 lines Info , 20 lines License , 1045 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma2.sh"
 
 echo " +****************************************************************************+
@@ -78,17 +78,32 @@ echo "
 #include <openssl/sha.h>
 #include <cuda.h>
 #include <device_functions.h>
-#define word const char
+#define word char
+#define CHUNK_SIZE 64
+#define TOTAL_LEN_LEN 8
 __device__ inline word f1( word x, word y, word z) { return ( ( x & y ) | ( ~x & z ) ); }
 __device__ inline word f2( word x, word y, word z) { return ( x ^ y ^ z ); }
 __device__ inline word f3( word x, word y, word z) { return ( ( x & y ) | ( x & z ) | ( y & z ) ); }
 __device__ inline word f4( word x, word y, word z) { return ( x ^ y ^ z ); } 
+#ifdef __cplusplus
+#define GNU99_PROTOTYPE(x)
+#else
+#define GNU99_PROTOTYPE(x) x
+extern \"C\" {
+__device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state * state);
+}
+#endif
 __shared__ word * hash;
+
+
 /* 32-bit rotate */
+
 __device__ inline word ROT(word x,int n){ return ( ( x << n ) | ( x >> ( 32 - n ) ) ); }
+
 #define CALC(n,i) temp =  ROT ( A , 5 ) + f##n( B , C, D ) +  W[i] + E + C##n  ; E = D; D = C; C = ROT ( B , 30 ); B = A; A = temp
-#define CHUNK_SIZE 64
-#define TOTAL_LEN_LEN 8
+
+
+
 /*
  * ABOUT bool: this file does not use bool in order to be as pre-C99 compatible as possible.
  */
@@ -100,7 +115,12 @@ __device__ inline word ROT(word x,int n){ return ( ( x << n ) | ( x >> ( 32 - n 
  * Initialize array of round constants:
  * (first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311):
  */
-__constant__ static const uint32_t k[] = {
+#ifdef __cplusplus
+#define GNU99_PROTOTYPE(x)
+#else
+#define GNU99_PROTOTYPE(x) x
+extern \"C\" {
+static const uint32_t k[] = {
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 	0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
 	0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
@@ -110,14 +130,16 @@ __constant__ static const uint32_t k[] = {
 	0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
+
 struct buffer_state {
-	const uint8_t * p;
+	const void * p;
 	size_t len;
 	size_t total_len;
 	int single_one_delivered; /* bool */
 	int total_len_delivered; /* bool */
 };
-__device__ static inline uint32_t right_rot(uint32_t value, unsigned int count)
+
+static inline uint32_t right_rot(uint32_t value, unsigned int count)
 {
 	/*
 	 * Defined behaviour in standard C for all count where 0 < count < 32,
@@ -125,7 +147,8 @@ __device__ static inline uint32_t right_rot(uint32_t value, unsigned int count)
 	 */
 	return value >> count | value << (32 - count);
 }
-static void init_buf_state(struct buffer_state * state, const uint8_t * input, size_t len)
+
+static void init_buf_state(struct buffer_state * state, const void * input, size_t len)
 {
 	state->p = input;
 	state->len = len;
@@ -133,30 +156,44 @@ static void init_buf_state(struct buffer_state * state, const uint8_t * input, s
 	state->single_one_delivered = 0;
 	state->total_len_delivered = 0;
 }
+
+}
+#endif
 /* Return value: bool */
+
+#ifdef __cplusplus
+#define GNU99_PROTOTYPE(x)
+#else
+#define GNU99_PROTOTYPE(x) x
+extern \"C\" {
 __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state * state)
 {
 	size_t space_in_chunk;
+
 	if (state->total_len_delivered) {
 		return 0;
 	}
+
 	if (state->len >= CHUNK_SIZE) {
 		memcpy(chunk, state->p, CHUNK_SIZE);
 		state->p += CHUNK_SIZE;
 		state->len -= CHUNK_SIZE;
 		return 1;
 	}
+
 	memcpy(chunk, state->p, state->len);
 	chunk += state->len;
 	space_in_chunk = CHUNK_SIZE - state->len;
 	state->p += state->len;
 	state->len = 0;
+
 	/* If we are here, space_in_chunk is one at minimum. */
 	if (!state->single_one_delivered) {
 		*chunk++ = 0x80;
 		space_in_chunk -= 1;
 		state->single_one_delivered = 1;
 	}
+
 	/*
 	 * Now:
 	 * - either there is enough space left for the total length, and we can conclude,
@@ -169,6 +206,7 @@ __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state 
 		int i;
 		memset(chunk, 0x00, left);
 		chunk += left;
+
 		/* Storing of len * 8 as a big endian 64-bit without overflow. */
 		chunk[7] = (uint8_t) (len << 3);
 		len >>= 5;
@@ -180,8 +218,15 @@ __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state 
 	} else {
 		memset(chunk, 0x00, space_in_chunk);
 	}
+
 	return 1;
 }
+
+
+} //extern\"C\"
+
+
+#endif
 #define MSGLEN ${8}
 #define TO '${9}'
 char s[MSGLEN];
@@ -214,7 +259,11 @@ __device__ int barke_sha256 (const char* path, char output[65])
     
     return 0;
 }
-
+#ifdef __cplusplus
+#define GNU99_PROTOTYPE(x)
+#else
+#define GNU99_PROTOTYPE(x) x
+extern \"C\" {
 __device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 {
 	/*
@@ -223,7 +272,7 @@ __device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 	 * Note 3: The compression function uses 8 working variables, a through h
 	 * Note 4: Big-endian convention is used when expressing the constants in this pseudocode,
 	 *     and when parsing message block data from bytes to words, for example,
-	 *     the first word of the input message "abc" after padding is 0x61626380
+	 *     the first word of the input message \"abc\" after padding is 0x61626380
 	 */
 
 	/*
@@ -234,7 +283,7 @@ __device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 	int i, j;
 
 	/* 512-bit chunks is what we will operate on. */
-	word chunk[64];
+	uint8_t chunk[64];
 
 	struct buffer_state state;
 
@@ -249,7 +298,7 @@ __device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 		 * copy chunk into first 16 words w[0..15] of the message schedule array
 		 */
 		uint32_t w[64];
-		word *p = chunk;
+		const void *p = chunk;
 
 		memset(w, 0x00, sizeof w);
 		for (i = 0; i < 16; i++) {
@@ -302,6 +351,9 @@ __device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 		hash[j++] = (word *) h[i];
 	}
 }
+
+}
+#endif
 /* Rotor wirings */
 __constant__ std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
 	/* 1: */ \"${1}\", 
@@ -702,7 +754,7 @@ __device__ void memInit(word * tmp, char input[], int length)
 
 __global__ void smash(size_t length, char * buffer, word * hash)
 {
-    word h0,h1,h2,h3,h4,h5,h6,h7;
+    int h0,h1,h2,h3,h4,h5,h6,h7;
     int higher = 126;
     int lower = 32;
     char *input_cpy = 0;
@@ -757,7 +809,7 @@ int C4 = 0xe9b5dba5;
         
     
     // Init words for SHA
-    word W[80],A,B,C,D,E,F,G,H,temp;
+    int W[80],A,B,C,D,E,F,G,H,temp;
  
     // calculate all possible charsets with the
     // given threadId, blockId and length
@@ -766,11 +818,16 @@ int C4 = 0xe9b5dba5;
         // Calculate sha256 for given input.
         // DO THE SHA256 ------------------------------------------------------
         //calc_sha256(hash, input_cpy, length);
+#ifdef __cplusplus
+#define GNU99_PROTOTYPE(x)
+#else
+#define GNU99_PROTOTYPE(x) x
+extern \"C\" {
     uint32_t h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 	int i,j,ah;
 
 	/* 512-bit chunks is what we will operate on. */
-	word chunk[64];
+	uint8_t chunk[64];
 
 	struct buffer_state state;
 
@@ -785,7 +842,7 @@ int C4 = 0xe9b5dba5;
 		 * copy chunk into first 16 words w[0..15] of the message schedule array
 		 */
 		uint32_t w[64];
-		word *p = chunk;
+		const void *p = chunk;
         memInit(W, input_cpy, length);
         for (i = 0; i < 16; i++) {
 			w[i] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
@@ -826,9 +883,9 @@ int C4 = 0xe9b5dba5;
         }
 
 		/* Add the compressed chunk to the current hash value: */
-		for (i = 0; i < 8; i++)
-			h[i] += ah[i];
-	
+		for (i = 0; i < 8; i++){
+            h[i] += ah[i];
+        }
 	/* Produce the final hash value (big-endian): */
 	for (i = 0, j = 0; i < 8; i++)
 	{
@@ -837,7 +894,8 @@ int C4 = 0xe9b5dba5;
 		hash[j++] = (word) (h[i] >> 8);
 		hash[j++] = (word) h[i];
 	}
-        
+}
+#endif
         for(int i = 16; i < 80; i++)
             W[i] = ROT( ( W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16] ) , 1 ); 
         
@@ -1050,7 +1108,7 @@ int main(int argc, char *argv[])
 }
  " > ./main.cu
 
-/usr/local/cuda-9.2/bin/nvcc main.cu -x cu -DVERSION="\"Enigma II 0.6 CUDA T.E.D. - The Enemy Dail - KOENIG-MARTIN - TESLA\"" -lssl -lcrypto -lpthread -lstdc++ -o enigma-cuda -I/usr/local/cuda-9.2/include
+/usr/local/cuda-9.2/bin/nvcc main.cu -x cu -DVERSION="\"Enigma II 0.6 CUDA T.E.D. - The Enemy Dail - KOENIG-MARTIN - TESLA\"" -lssl -lcrypto -lpthread -lstdc++ -std=c++03 -o enigma-cuda -I/usr/local/cuda-9.2/include
 
 mkdir -p bin
 
@@ -1083,4 +1141,5 @@ rm -rf ./LICENSE
 enigma-cuda --version
 
 exit 0
+
 
