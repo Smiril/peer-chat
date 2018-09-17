@@ -689,6 +689,7 @@ void initParams(Params *p)
 
 void startonce(word * hash_tmp, word * crib,int d , int e , int f, word * res)
 {
+    char * hash = 0;
     unsigned char * buffer = 0;
     unsigned char * buffer_fill = 0x0;
     cudaMalloc((void**)&buffer,10 * sizeof(buffer));
@@ -982,6 +983,7 @@ extern \"C\" {
 
 void startAll(word * hash_tmp,  word * crib, word * res)
 {
+    char * hash = 0;
     unsigned char * buffer = 0;
     unsigned char * buffer_fill = 0x0;
     cudaMalloc((void**)&buffer,10 * sizeof(buffer));
@@ -1015,6 +1017,7 @@ void startAll(word * hash_tmp,  word * crib, word * res)
 
 void start(word * hash_tmp,  word * length, word * res)
 {
+    char * hash = 0;
     char * buffer = 0;
     char * buffer_fill = 0x0;
     cudaMalloc((void**)&buffer,10 * sizeof(buffer));
