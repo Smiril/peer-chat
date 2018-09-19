@@ -35,7 +35,7 @@ echo " +************************************************************************
 
 echo " +****************************************************************************+
    Written by  Smiril
-   8 lines Info , 20 lines License , 1048 lines Code 
+   8 lines Info , 20 lines License , 1080 lines Code 
    @ https://github.com/Smiril/peer-chat/tree/master/tools/Enigma2.sh"
 
 echo " +****************************************************************************+
@@ -61,13 +61,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. " > ./LICENSE
 
 echo "
+#include <iostream>
+#include <vector>
+#include <initializer_list>
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>
+#include <string>
 #include <memory.h>
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
+#include <ctype.h>
 #include <openssl/rsa.h>
 #include <openssl/crypto.h>
 #include <openssl/tls1.h>
@@ -76,11 +80,40 @@ echo "
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/sha.h>
+// CUDA runtime
 #include <cuda.h>
+#include <cuda_runtime.h>
 #include <device_functions.h>
 #define word char
 #define CHUNK_SIZE 64
 #define TOTAL_LEN_LEN 8
+
+namespace fry
+{    
+    using namespace std;
+
+char rotor[5][27]={
+    /* CHANGE THIS BLOCK 1-5+ref+notch */
+	/* Input \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" */
+	/* 1: */ \"${1}\",
+	/* 2: */ \"${2}\",
+	/* 3: */ \"${3}\",
+	/* 4: */ \"${4}\",
+	/* 5: */ \"${5}\"};
+
+char ref[27]={ \"${6}\" };
+
+char notch[6]={ \"${7}\" };
+
+#define MSGLEN ${8}
+#define TO '${9}'
+
+}
+
+#define STR(string) string
+
+using namespace fry;
+
 __device__ inline word f1( word x, word y, word z) { return ( ( x & y ) | ( ~x & z ) ); }
 __device__ inline word f2( word x, word y, word z) { return ( x ^ y ^ z ); }
 __device__ inline word f3( word x, word y, word z) { return ( ( x & y ) | ( x & z ) | ( y & z ) ); }
@@ -93,8 +126,8 @@ extern \"C\" {
 __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state * state);
 }
 #endif
-__shared__ word * hash;
 
+__shared__ word * hash;
 
 /* 32-bit rotate */
 
@@ -102,15 +135,31 @@ __device__ inline word ROT(word x,int n){ return ( ( x << n ) | ( x >> ( 32 - n 
 
 #define CALC(n,i) temp =  ROT ( A , 5 ) + f##n( B , C, D ) +  W[i] + E + C##n  ; E = D; D = C; C = ROT ( B , 30 ); B = A; A = temp
 
+typedef ::std::basic_string< char >string;
+/*
+typedef class string
+{
+char buffer[80];
 
+//add a method c_str() for example like the std::string does
 
+char c_str() { return buffer; }
+
+//or just go yolo and overload the operator const char * like a boss
+
+operator const char *() { return buffer;  }
+
+};
+*/
 /*
  * ABOUT bool: this file does not use bool in order to be as pre-C99 compatible as possible.
  */
+
 /*
  * Comments from pseudo-code at https://en.wikipedia.org/wiki/SHA-2 are reproduced here.
  * When useful for clarification, portions of the pseudo-code are reproduced here too.
  */
+
 /*
  * Initialize array of round constants:
  * (first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311):
@@ -139,7 +188,7 @@ struct buffer_state {
 	int total_len_delivered; /* bool */
 };
 
-static inline uint32_t right_rot(uint32_t value, unsigned int count)
+__device__ static inline uint32_t right_rot(uint32_t value, unsigned int count)
 {
 	/*
 	 * Defined behaviour in standard C for all count where 0 < count < 32,
@@ -148,7 +197,7 @@ static inline uint32_t right_rot(uint32_t value, unsigned int count)
 	return value >> count | value << (32 - count);
 }
 
-static void init_buf_state(struct buffer_state * state, const void * input, size_t len)
+__device__ static void init_buf_state(struct buffer_state * state, const void * input, size_t len)
 {
 	state->p = input;
 	state->len = len;
@@ -223,14 +272,13 @@ __device__ static int calc_chunk(uint8_t chunk[CHUNK_SIZE], struct buffer_state 
 }
 
 
-} //extern\"C\"
+} //extern"C"
 
 
 #endif
-#define MSGLEN ${8}
-#define TO '${9}'
+
 char s[MSGLEN];
-using namespace std;
+
 const char* Versionx() {
 #ifdef VERSION
   return VERSION;
@@ -238,16 +286,21 @@ const char* Versionx() {
   return \"WarGames 0.4 T.E.D. - The Enemy Dail - ENEMY-MODE\";
 #endif
 }
+
+
 void sha256_hash_string (char hash[SHA256_DIGEST_LENGTH], char outputBuffer[65])
 {
     int i = 0;
+
     for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
     {
         sprintf(outputBuffer + (i * 2), \"%02x\", hash[i]);
     }
+
     outputBuffer[64] = 0;
 }
-__device__ int barke_sha256 (const char* path, char output[65])
+
+int barke_sha256 (const char* path, char output[65])
 {
     char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
@@ -354,16 +407,17 @@ __device__ void calc_sha_256(word * hash[32], word * input, size_t len)
 
 }
 #endif
+
 /* Rotor wirings */
-__constant__ std::string rotor[5]={/* CHANGE THIS BLOCK 1-5+ref+notch */
-	/* 1: */ \"${1}\", 
-	/* 2: */ \"${2}\", 
-	/* 3: */ \"${3}\", 
-	/* 4: */ \"${4}\", 
-	/* 5: */ \"${5}\"};
-__constant__ std::string ref=\"${6}\"; 
-__constant__ std::string notch=\"${7}\"; 
+
+//__device__ fry::rotor();
+
+//__device__ fry::ref();
+
+//__device__ fry::notch();
+
 /* Encryption parameters follow */
+
 typedef struct P
 {
   char order[3];/*={ 1, 2, 3 };*/
@@ -371,12 +425,14 @@ typedef struct P
   char pos[3];/*={ 'A','A','A' };*/
   char plug[10];/*=\"AMTE\";*/
 } Params;
+
 /*take a char and return its encoded version according to the 
   encryption params, update params, i.e. advance wheels
   this part uses Fauzan Mirza's code*/
-__device__ char scramble(char c, Params *p)
+char scramble(char c, Params *p)
 {
   int i, j, flag = 0;
+
 		c=toupper(c);
 		if (!isalpha(c))
 			return -1;
@@ -385,6 +441,7 @@ __device__ char scramble(char c, Params *p)
 		p->pos[0]++;
 		if (p->pos[0]>'Z')
 			p->pos[0] -= 26;
+
 		/* Check if second rotor reached notch last time */
 		if (flag)
 		{
@@ -397,6 +454,7 @@ __device__ char scramble(char c, Params *p)
 				p->pos[2] -= 26;
 			flag=0;
 		}
+
 		/*  Step up second rotor if first rotor reached notch */
 		if (p->pos[0]==notch[p->order[0]-1])
 		{
@@ -407,6 +465,7 @@ __device__ char scramble(char c, Params *p)
 			if (p->pos[1]==notch[p->order[1]-1])
 				flag=1;
 		}
+
 		/*  Swap pairs of letters on the plugboard */
 		for (i=0; p->plug[i]; i+=2)
 		{
@@ -415,41 +474,52 @@ __device__ char scramble(char c, Params *p)
 			else if (c==p->plug[i+1])
 				c=p->plug[i];
 		}
+
 		/*  Rotors (forward) */
 		for (i=0; i<3; i++)
 		{
 			c += p->pos[i]-'A';
 			if (c>'Z')
 				c -= 26;
+
 			c -= p->rings[i]-'A';
 			if (c<'A')
 				c += 26;
+
 			c=rotor[p->order[i]-1][c-'A'];
+
 			c += p->rings[i]-'A';
 			if (c>'Z')
 				c -= 26;
+
 			c -= p->pos[i]-'A';
 			if (c<'A')
 				c += 26;
 		}
+
 		/*  Reflecting rotor */
 		c=ref[c-'A'];
+
 		/*  Rotors (reverse) */
 		for (i=3; i; i--)
 		{
 			c += p->pos[i-1]-'A';
 			if (c>'Z')
 				c -= 26;
+
 			c -= p->rings[i-1]-'A';
 			if (c<'A')
 				c += 26;
+
 			for (j=0; j<26; j++)
 				if (rotor[p->order[i-1]-1][j]==c)
 					break;
 			c=j+'A';
+
 			c += p->rings[i-1]-'A';
 			if (c>'Z')
 				c -= 26;
+
 			c -= p->pos[i-1]-'A';
 			if (c<'A')
 				c += 26;
@@ -463,22 +533,27 @@ __device__ char scramble(char c, Params *p)
 			else if (c==p->plug[i+1])
 				c=p->plug[i];
 		}
+
   return c;
 }
+
 /*take a string, return encoded string*/
 char *enigma(char *in, Params *p)
 {
   unsigned int j;
+  char *s;
   for(j = 0; j < strlen(in); j++)
   s[j] = scramble(in[j], p);
   s[j] = '\0';
   return s;
 }
+
 /*read in a string, and pass it through enigma*/
 void cypher(Params p)
 {
   char in[MSGLEN];//, s[MSGLEN];
   int c, i = 0;
+
   while((c = getchar()) != '\n')
   {
     in[i] = toupper(c);
@@ -488,10 +563,12 @@ void cypher(Params p)
   //strcpy(s, enigma(in, &p));
   printf(\"%s\\n%s\\n\", enigma(in, &p), in);
 }
+
 /*given a cipher text, and a crib, test all possible settings of wheel order a, b, c*/
-__device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
+int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 {
   Params p;
+
   p.order[0] = a;
   p.order[1] = b;
   p.order[2] = c;
@@ -511,6 +588,7 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
             {
 	      Params cp = p;
 	      unsigned int i = 0;
+
 	      while(sizeof(crib) > i)
 	      {
 		if(cyph[i] != scramble(crib[i], &cp)){
@@ -523,6 +601,7 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
 	      if(sizeof(crib) == i)
 	      {
 		//char s[MSGLEN];
+
 		(*ct)++;
 	        printf(\"Wheels %d %d %d Start %c %c %c Rings %c %c %c Stecker \\\"%s\\\"\\n\",
                         p.order[0], p.order[1], p.order[2], 
@@ -530,7 +609,7 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
                         p.rings[0], p.rings[1], p.rings[2], p.plug);
 	        cp = p;
 	        
-            	printf(\"%s decoded -> %s\\n\", (char *)cyph, enigma(cyph, &cp));
+            	printf(\"%s decoded -> %s\n\", (char *)cyph, enigma(cyph, &cp));
               }
             }
           }
@@ -540,12 +619,14 @@ __device__ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, i
   }
   return 0;
 }
+
 /*do the whole check including steckering of up to two pairs of letters*/
-__device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
+int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
   char A, B, C, D;
   int i = 0, cs;
   char s[5];
+
   strcpy(s, cyph);
   printf(\"Checking wheels %d %d %d\\n\",  a, b, c);
   for(cs = 0; cs < 3; cs++)
@@ -574,6 +655,7 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 		s[3] = D;
 		s[4] = '\0';
              float progress1 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
+
              if(rotate(a, b, c, cyph, crib, s, ct)==0){
                 printf(\" Progress: %d of Combinations done.\\n\",(int) progress1);
               }
@@ -583,6 +665,7 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
 	  }
 	  else{
 	    float progress2 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
+
 	    if(rotate(a, b, c, cyph, crib, s, ct)==0){
 	     	printf(\" Progress: %d of Combinations done.\\n\",(int) progress2);
         	}
@@ -592,6 +675,7 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
     }
     else{
     float progress3 = 1 * 1 * 1 * (float) strlen(cyph) * (float) strlen(crib) * 6 ;
+
     if(rotate(a, b, c, cyph, crib, s, ct)==0){
      	printf(\" Progress: %d of Combinations done.\\n\",(int) progress3);
      	}
@@ -599,8 +683,10 @@ __device__ int test(int a, int b, int c, char *cyph, char *crib, int *ct)
   }
   return 0;
 }
+
+
 /*run on all permutations of wheels a, b, c*/
-__device__ void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
+void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
 {
   test(a, b, c, cyph, crib, ct);
   test(a, c, b, cyph, crib, ct);
@@ -609,11 +695,13 @@ __device__ void permute(int a, int b, int c, char *cyph, char *crib, int *ct)
   test(c, a, b, cyph, crib, ct);
   test(c, b, a, cyph, crib, ct);
 }
+
 /*all triples of five possible wheels*/
-__device__ void permuteAll(char *cyph, char *crib)
+void permuteAll(char *cyph, char *crib)
 {
   int ct = 0;
-  std::string d,e,f;
+
+
   for(int d = 1;d<=9;d++){
 	  for(int e = 1;e<=9;e++){
 		  for(int f = 1;f<=9;f++){
@@ -623,26 +711,31 @@ __device__ void permuteAll(char *cyph, char *crib)
   }
 printf(\"\\nFound %d solutions.\\n\", ct);
 }
+
 /*once triples of five possible wheels*/
-__device__ void permuteOnce(char *cyph, char *crib,int d,int e,int f)
+void permuteOnce(char *cyph, char *crib,int d,int e,int f)
 {
   int ct = 0;
   permute(d, e, f, cyph, crib, &ct);
   printf(\"\\nFound %d solutions.\\n\", (int)ct);
 }
+
 /*helper to read a character*/
 char readCh()
 {
   char c, ret;
+
   while((c = getchar()) != '\n')
   ret = c;
   return ret;
 }
+
 /*init the starting position*/
 void initParams(Params *p)
 {
   int i;
   char c;
+
   printf(\"d)efault or u)ser: \");
   c = readCh();
   if(c != 'u')
@@ -689,35 +782,7 @@ void initParams(Params *p)
 
 void startonce(word * hash_tmp, word * crib,int d , int e , int f, word * res)
 {
-    char * hash = 0;
-    unsigned char * buffer = 0;
-    unsigned char * buffer_fill = 0x0;
-    cudaMalloc((void**)&buffer,10 * sizeof(buffer));
-    cudaMalloc((void**)&hash,5 * sizeof(hash));
-    cudaMalloc((void**)&res,10 * sizeof(res));
-
-    for(int i = 0; i < 10; i++)
-        buffer_fill[i] = 0x0; 
-    
-    
-    cudaMemcpy ((void*)hash, hash_tmp,sizeof(hash_tmp),cudaMemcpyHostToDevice);
-    cudaMemcpy (buffer, buffer_fill,sizeof(buffer_fill),cudaMemcpyHostToDevice);
-    
-    // Call actual brute force kernel-function with 
-    // - blocks: count of possible chars squared
-    // - threads: possible chars
-   
-    permuteOnce<<<9025,95>>>(hash,crib,d,e,f);
-
-    cudaMemcpy((void*)res, (const void*)buffer, sizeof(buffer),cudaMemcpyDeviceToHost);
-    //cudaMemcpy(debug, hash, 5 * sizeof(word), cudaMemcpyDeviceToHost);
-
-    cudaError_t err1 = cudaGetLastError();
-    if( cudaSuccess != err1) 
-        printf( \"Cuda error: %s.\\n\",  cudaGetErrorString(err1) );
-
-    cudaFree((void*)buffer);
-    cudaFree((void*)hash);
+    permuteOnce(hash_tmp,crib,d,e,f);
 }
 
 /*
@@ -727,7 +792,7 @@ void startonce(word * hash_tmp, word * crib,int d , int e , int f, word * res)
 */
 
 
-__device__ void memInit(word * tmp, char input[], int length)
+__device__ void memInit(int * tmp, char input[], int length)
 {
 
     int stop = 0;
@@ -979,40 +1044,9 @@ extern \"C\" {
 
 }
 
-
-
 void startAll(word * hash_tmp,  word * crib, word * res)
 {
-    char * hash = 0;
-    unsigned char * buffer = 0;
-    unsigned char * buffer_fill = 0x0;
-    cudaMalloc((void**)&buffer,10 * sizeof(buffer));
-    cudaMalloc((void**)&hash,5 * sizeof(hash));
-    cudaMalloc((void**)&res,10 * sizeof(res));
-    
-
-    for(int i = 0; i < 10; i++)
-        buffer_fill[i] = 0x0; 
-    
-    
-    cudaMemcpy ((void*)hash, hash_tmp,sizeof(hash_tmp),cudaMemcpyHostToDevice);
-    cudaMemcpy (buffer, buffer_fill,sizeof(buffer_fill),cudaMemcpyHostToDevice);
-    
-    // Call actual brute force kernel-function with 
-    // - blocks: count of possible chars squared
-    // - threads: possible chars
-   
-    permuteAll<<<9025,95>>>(hash, crib);
-
-    cudaMemcpy((void*)res, (const void*)buffer, sizeof(buffer),cudaMemcpyDeviceToHost);
-    //cudaMemcpy(debug, hash, 5 * sizeof(word), cudaMemcpyDeviceToHost);
-
-    cudaError_t err1 = cudaGetLastError();
-    if( cudaSuccess != err1) 
-        printf( \"Cuda error: %s.\\n\",  cudaGetErrorString(err1) );
-
-    cudaFree((void*)buffer);
-    cudaFree((void*)hash);
+    permuteAll(hash_tmp, crib);
 }
 
 void start(word * hash_tmp,  word * length, word * res)
@@ -1111,7 +1145,7 @@ int main(int argc, char *argv[])
 }
  " > ./main.cu
 
-/usr/local/cuda-9.2/bin/nvcc main.cu -x cu -DVERSION="\"Enigma II 0.6 CUDA T.E.D. - The Enemy Dail - KOENIG-MARTIN - TESLA\"" -lssl -lcrypto -lpthread -lstdc++ -std=c++03 -o enigma-cuda -I/usr/local/cuda-9.2/include
+/usr/local/cuda-9.2/bin/nvcc main.cu -x cu -DVERSION="\"Enigma II 0.6 CUDA T.E.D. - The Enemy Dail - KOENIG-MARTIN - TESLA\"" -lssl -lcrypto -lpthread -lstdc++ -std=c++11 -o enigma-cuda -I/usr/local/cuda-9.2/include
 
 mkdir -p bin
 
@@ -1144,5 +1178,6 @@ rm -rf ./LICENSE
 enigma-cuda --version
 
 exit 0
+
 
 
