@@ -1138,7 +1138,7 @@ int main(int argc, char *argv[])
               }
 	          if(strcmp(argv[x], \"--help\") == 0)
 	          {
-                  printf(\"Help\\n\\n\\t--option-1 PLUG MSG = Enigma Crack Algo\\n\\t--option-2 PLUG MSG NUM NUM NUM = Enigma Crack Once Algo\\n\\t--option-3 = Enigma 5 Rotor Calculator\\n\\t--option-4 MSGHASH MSGLEN = Enigma Bruteforce MSG Calculator\\n\\t--barke = SHA256 MSGHASH\\n\\t--version = Version\\n\\n\");
+                  printf(\"Help\\n\\n\\t--option-1 PLUG MSG = Enigma Crack Algo\\n\\t--option-2 PLUG MSG NUM NUM NUM = Enigma Crack Once Algo\\n\\t--option-3 = Enigma 5 Rotor Calculator\\n\\t--option-4 MSGHASH MSGLEN = SHA256 Bruteforce MSGHASH Calculator\\n\\t--barke = SHA256 MSGHASH\\n\\t--version = Version\\n\\n\");
               }
         }
   return 0 ;
