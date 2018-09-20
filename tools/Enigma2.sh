@@ -287,7 +287,6 @@ const char* Versionx() {
 #endif
 }
 
-
 void sha256_hash_string (char hash[SHA256_DIGEST_LENGTH], char outputBuffer[65])
 {
     int i = 0;
@@ -429,7 +428,7 @@ typedef struct P
 /*take a char and return its encoded version according to the 
   encryption params, update params, i.e. advance wheels
   this part uses Fauzan Mirza's code*/
-char scramble(char c, Params *p)
+/*__device__ */char scramble(char c, Params *p)
 {
   int i, j, flag = 0;
 
@@ -541,7 +540,6 @@ char scramble(char c, Params *p)
 char *enigma(char *in, Params *p)
 {
   unsigned int j;
-  char *s;
   for(j = 0; j < strlen(in); j++)
   s[j] = scramble(in[j], p);
   s[j] = '\0';
@@ -565,7 +563,7 @@ void cypher(Params p)
 }
 
 /*given a cipher text, and a crib, test all possible settings of wheel order a, b, c*/
-int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
+/*__device__ */int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 {
   Params p;
 
@@ -603,13 +601,13 @@ int rotate(int a, int b, int c, char *cyph, char *crib, char *plug, int *ct)
 		//char s[MSGLEN];
 
 		(*ct)++;
-	        printf(\"Wheels %d %d %d Start %c %c %c Rings %c %c %c Stecker \\\"%s\\\"\\n\",
+	        printf(\"Wheels %d %d %d Start %c %c %c Rings %c %c %c Stecker \\"%s\\"\\n\",
                         p.order[0], p.order[1], p.order[2], 
                         p.pos[0], p.pos[1], p.pos[2],
                         p.rings[0], p.rings[1], p.rings[2], p.plug);
 	        cp = p;
 	        
-            	printf(\"%s decoded -> %s\n\", (char *)cyph, enigma(cyph, &cp));
+            	printf(\"%s decoded -> %s\\n\", (char *)cyph, enigma(cyph, &cp));
               }
             }
           }
