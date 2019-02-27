@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="description" content="Einbauanleitung und Hinweise für das PHP Script: Communicate Formular Script." />
+		<meta name="keywords" content="Formmailer, MYSQL-Mailer, Formular, Kontaktformular, Communicate Formular" />
+		<meta name="revisit-after" content="14days" />
+		<meta name="robots" content="index, follow" />
+		<title>Communicate Formular Einbauanleitung / Liesmich</title>
+		<style type="text/css">
+			<!--
+			body {
+				background-color:#B0B3AA;
+				margin:0;
+				padding:0;
+				color:#eaeaea;
+				font-size:16px;
+				line-height:1.5;
+				font-family:Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace
+			}
+			#container {
+				font-family:Verdana, Arial, Helvetica, sans-serif;
+				font-size:0.8em;
+				width: 900px;
+				margin:50px auto 0px auto;
+				line-height: 1.4em;
+			}
+			.ueberschrift {
+				width: 890px;
+				background-color:#575951;
+				color:#FFFFFF;
+				font-weight:bold;
+				font-size:17px;
+				padding:8px;
+				border-style:solid;
+				border-width:1px;
+				border-color:#000000
+				font-family:Monaco, "Lucida Console", Terminal, monospace
+			}
+			.inhalt {
+				background-color:#ECEBE9;
+				color:#475951;
+				border-style:solid;
+				border-width:1px;
+				padding:8px;
+				border-color:#000000;
+			}
+			/* ORANGE */
+			.Stil1 {
+				color: #FF6600;
+			}
+			.blue {
+				color: #0000CC;
+			}
+			a {
+				color: #FF6600;
+				text-decoration: none;
+				outline: 0;
+			}
+			/* ORANGE HOVRER LINK */
+			a:hover {
+				color: #475951;
+				text-decoration: none;
+			}
+			.linie {
+				border-bottom:1px dotted #FF6600;
+			}
+			.code {
+				padding:5px;
+				margin: 5px 0px;
+				background-color:#FFFFFF;
+				border: 1px solid #000000;
+				height:15px;
+				width: 790px;
+				font-family: "Courier New", Courier, monospace;
+				font-size:11px;
+			}
+			.red {
+				color: #FF0000;
+			}
+			.grey {
+				color: #666666;
+			}
+			.orange {
+				color: #FF6600;
+			}
+			-->
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<table width="900" style="border-collapse:collapse">
+				<tr>
+					<td class="ueberschrift" scope="col"><span class="Stil1">Communicate Formular</span> V1.3</td>
+				</tr>
+				<tr>
+					<td class="inhalt"><p>Vielen Dank, das Sie das Communicate Formular nutzen möchten!</p>
+						<p>Damit das Formular reibungslos funktioniert, bitte ich Sie, diese Anleitung <strong>komplett</strong> durchzulesen.</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="ueberschrift" scope="col">Voraussetzungen</td>
+				</tr>
+				<tr>
+					<td class="inhalt">WebSpace mit PHP.und MYSQL Server</td>
+				</tr>
+				<tr>
+					<td class="ueberschrift" scope="col">Funktionsüberblick</td>
+				</tr>
+				<tr>
+					<td class="inhalt"><ul>
+			    <li>Einfacher Einbau mit nur 9 Befehlen in Ihre bestehende Seite</li>
+							<li>Durch CSS komplett einstellbares Design</li>
+							<li>Xhtml und CSS 2.1 valider Code</li>
+							<li>HTACCESS am Webserver erforderlich</li>
+							<li>MySQL Datenbank erforderlich</li>
+							<li>Html oder PlainText Mail einstellbar</li>
+							<li>Einstellbare Zeitsperre (IP wird gespeichert) um Spam zu vermeiden</li>
+							<li>Emailadressen werden auf korrekte Schreibweise überprüft</li>
+							<li>Alle Eingaben werden gefiltert und bereinigt weiterverarbeitet. (Sicherheit)</li>
+							<li>Verstecktes Input Feld für Spambots. Bei ausgefülltem Feld erfolgt eine Weiterleitung</li>
+							<li>Spam Schutz durch zuschaltbares Captcha</li>
+							<li>Nach dem Absenden erscheint eine persöhnliche Dank Ausgabe</li>
+							<li>Einstellbare Pflichtfelder (Sie können wählen, welche Felder Pflicht sind)</li>
+						    <li>Der Absender kann sich auf Wunsch eine Kopie an Seine eigene Adresse schicken lassen</li>
+						    <li>Der Admin kann sich auf Wunsch eine Antwort an eine Adresse schicken lassen</li>
+						</ul>
+				  </td>
+				</tr>
+				<tr>
+					<td class="ueberschrift" scope="col">Einbauanleitung</td>
+				</tr>
+				<tr>
+					<td class="inhalt" scope="col"><ol>
+						<li>Öffnen Sie das Zip Archiv, und entnehmen Sie den Ordner &quot;htdocs&quot;. <br>Die Dateien <strong>index.php , impressum.php , info.php , admin/index.php</strong> dienen nur als Einbaubeispiel und wird wie die <strong>readme.html</strong> nicht für das Formular gebraucht!</li>
+						<li>Nun öffnen Sie bitte die Datei <strong>settings.php</strong> in dem Ordner &quot;/kontakt/&quot; und &quot;/admin/kontakt/&quot; mit einem Editor, und passen die Einstellungen Ihren Wünschen entsprechend an. Jede Einstellung ist genau beschrieben. An den Pfadangaben brauchen Sie nichts ändern.</li>
+						<li>Öffnen Sie nun Ihre Seite (Datei), in der das Formular integriert werden soll, mit einem Editor.<br/>
+							Das Formular nutzt <a href="http://de.selfhtml.org/css/" title="Was ist CSS?" target="_blank">CSS</a> für das optische Layout.<br/>
+							Fügen  Sie deshalb folgende CSS Anweisung <strong>innerhalb des <span class="blue">&lt;head&gt;</span> Bereiches</strong> Ihrer Seite (Datei) ein.
+							<div class="code"><span class="blue">&lt;link</span> <span class="red">href=</span>&quot;kontakt/kontakt_style.css&quot; <span class="red">rel=</span>&quot;stylesheet&quot; <span class="red">type=</span>&quot;text/css&quot; <span class="red">media=</span>&quot;screen&quot; <span class="blue">/&gt;</span></div>
+						</li>
+						<li>Geben Sie nun noch folgenden Code in die gleiche Datei ein<br/>
+						(<strong>bitte ganz oben, in die aller erste Reihe schreiben - Es darf kein Zeichen vor dieser Anweisung stehen.</strong>)
+                        <div class="code"><span class="red">&lt;?php</span> session_start()<span class="blue">; </span> <span class="orange">$script_pfad</span>=&quot;kontakt/&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div>
+						</li>
+						<li>Und an der Stelle, wo  das Formular erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;formmailer.php&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div></li>
+						<li>An der Stelle, wo  der Counter erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;count.php&quot;<span class="blue">;</span> counter(<span class="orange">'1'</span>)<span class="blue">; <span class="blue">echo</span> <span class="orange">$zahl</span><span class="blue">;</span> <span class="red">?&gt;</span> </div>
+							An der Stelle wo <strong>&quot;counter('1');&quot;</strong> steht kann man die Zahlen <strong>1-99999999999</strong> einfügen.<br><strong>1,2,3,4,5</strong> usw. ansteigend egal welche Anzahl von Countern benötigt wird.</li>
+						<li>Öffnen Sie nun Ihre Admin Seite (Datei), in der das Formular integriert werden soll, mit einem Editor.<br/>
+							Das Formular nutzt <a href="http://de.selfhtml.org/css/" title="Was ist CSS?" target="_blank">CSS</a> für das optische Layout.<br/>
+							Fügen  Sie deshalb folgende CSS Anweisung <strong>innerhalb des <span class="blue">&lt;head&gt;</span> Bereiches</strong> Ihrer Seite (Datei) ein.
+							<div class="code"><span class="blue">&lt;link</span> <span class="red">href=</span>&quot;admin/kontakt/kontakt_style.css&quot; <span class="red">rel=</span>&quot;stylesheet&quot; <span class="red">type=</span>&quot;text/css&quot; <span class="red">media=</span>&quot;screen&quot; <span class="blue">/&gt;</span></div>
+						</li>
+						<li>Geben Sie nun noch folgenden Code in die gleiche Datei ein<br/>
+						(<strong>bitte ganz oben, in die aller erste Reihe schreiben - Es darf kein Zeichen vor dieser Anweisung stehen.</strong>)
+                        <div class="code"><span class="red">&lt;?php</span> session_start()<span class="blue">; </span> <span class="orange">$script_pfad</span>=&quot;admin/kontakt/&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div>
+						</li>
+						<li>Und an der Stelle, wo  das Formular erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;formmailer.php&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div></li>
+						<li>An der Stelle, wo  der Counter erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;count.php&quot;<span class="blue">;</span> <span class="blue">echo</span> <span class="orange">$zahl</span><span class="blue">;</span> <span class="red">?&gt;</span> </div></li>
+						<li>An der Stelle, wo  die Inbox erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;mails.php&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div></li>
+						<li>An der Stelle, wo  der Sent Folder erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;sent.php&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div></li>
+						<li>An der Stelle, wo  die Statistik erscheinen soll fügen Sie noch folgenden Code ein:<br/>
+							<div class="code"><span class="red">&lt;?php</span> <span class="blue">require</span> <span class="orange">$script_pfad.</span>&quot;stats.php&quot;<span class="blue">;</span> <span class="red">?&gt;</span> </div></li>
+						<li>Jetzt speichern Sie die Datei am besten gleich mit der Datei-Endung <strong>.php</strong> ab. Oder Sie benennen anschl. die Datei von <strong>.html</strong> in <strong>.php</strong> um. (Denken Sie daran, ggf. noch in Ihren anderen Seiten die Links auch von.html in .php zu ändern)</li>
+							<li><strong>Noch die admin/setup.php Editieren und http://www.test.com/admin/setup.php aufrufen , Fertig! Nun können Sie das Formular verwenden.<br/>
+							</strong></li><ul>
+							<li>Zum Hochladen benutzen Sie am Besten ein FTP Programm (z.B. das kostenlose <a href="http://www.filezilla.de/download.htm" title="Download FileZilla" target="_blank">FileZilla</a>). Laden Sie nun Ihre ehemalige html Datei und den Ordner &quot;kontakt&quot; und &quot;admin&quot;  auf Ihren Webspace hoch. Es empfiehlt sich, den Ordner &quot;kontakt&quot; und &quot;admin&quot;  in das gleiche Verzeichnis zu legen, wo Sie auch Ihre ehemalige html Seite abgelegt haben.</li>
+							</ul>
+						</ol></td>
+					</tr>
+					<tr>
+						<td class="ueberschrift" scope="col">Hinweise</td>
+					</tr>
+					<tr>
+						<td class="inhalt">
+							<ul>
+								<li>Das Kontakt Formular ist für die <span class="Stil1">Private Nutzung kostenlos</span>.</li>
+								<li><span class="Stil1">Hinweis zum MYSQL:</span> Das Script ben&ouml;tigt INSERT und INSERT,SELECT,UPDATE im usermode und INSERT,SELECT im adminmode. Beide modes sind in der &quot;settings.php&quot; auffindbar. Ein user und ein admin account.</li>
+								<li><span class="Stil1">Hinweis zum CSS:</span> Alternativ können Sie auch, wenn schon eine CSS Datei für Ihre Seite existiert, den Inhalt in Ihre eigene CSS Datei einfügen. Dann brauchen Sie unter Einbauanleitung den Punkt 4 und 8 nicht beachten.</li>
+								<li><span class="Stil1">Pfadangaben:</span> Wenn die Datei, die das Formular einbinden soll, auf einer Ebene mit dem Ordner &quot;kontakt&quot; und &quot;admin&quot; liegt, brauchen Sie nichts zu beachten. Andernfalls müssen Sie den Pfad abändern. Angenommen, Ihre Fomularseite liegt hier: http://www.test.com/mein_formular.php<br/>
+								und der Ordner mit dem Kontaktformular befindet sich in: http://test.com/scripte/kontakt/ und http://test.com/scripte/admin/kontakt/<br/>
+								dann schreiben Sie bei Punkt 4 , 8 und 5 , 9 nicht nur "kontakt/" sondern "scripte/kontakt/". und "admin/kontakt/" sondern "scripte/admin/kontakt/"
+								</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td class="ueberschrift" scope="col">Änderungen in den Versionen:</td>
+					</tr>
+					<tr>
+						<td class="inhalt"><p><b>Version: <span class="Stil1">Communicate Formular 1.3</span></b></p>
+                          <ul>
+							<li>HTACCESS Integration</li>
+                            <li>MYSQL Integration</li>
+                            <li>E-Mail Speicherung am MYSQL Server</li>
+                            <li>E-Mail Versand &uuml;ber den WebServer</li>
+                            <li>E-Mail Inbox/Sent View</li>
+                            <li>Captcha Integration</li>
+                            <li>Counter Integration mit IP , Zeitsperre und Statistik erstellung</li>
+                            <li>Antwort Formular Integration mit freigabe h&auml;ckchen</li>
+							<li>Setup Quick Install</li>
+                          </ul>
+						<p><b>Version: <span class="Stil1">Kontakt Formular 1.2</span></b></p>
+							<ul>
+                            <li>Sicherheitsupdate durchgeführt</li>
+                          </ul>
+						<p><b>Version: <span class="Stil1">Kontakt Formular 1.1</span></b></p>
+							<ul>
+						    <li>Layout komplett erneuert (DIV statt Tabelle für eine einfachere anpassung an Ihre Optik)</li>
+								<li>Option hinzugefügt um die Mail als Html oder PlainText zu versenden</li>
+								<li>Option für Charset einstellung hinzugefügt (Utf-8 oder ISO-8859-1 usw...)</li>
+								<li>Installation vereinfacht</li>
+								<li>CSS Datei kommentiert, keine lange suche, wenn Sie die Optik verändert möchten</li>
+							    <li>Funktion hinzugefügt, das der Absender sich auf Wunsch eine Kopie der Nachricht zukommen lassen kann</li>
+							</ul>
+					  </td>
+					</tr>
+					<tr>
+						<td class="ueberschrift" scope="col">Downloads:</td>
+					</tr>
+					<tr>
+						<td class="inhalt"><p><b>Version: <span class="Stil1">Communicate Formular 1.3</span></b></p>
+                          <ul>
+							<li><a href="https://smiril.github.io/peer-chat/php/">Smiril PHP Github</a></li>
+                          </ul>
+						<p><b>Version: <span class="Stil1">Kontakt Formular 1.2</span></b></p>
+							<ul>
+                            <li><a href="https://www.hinnendahl.com">Hinnendahl.com</a></li>
+                          </ul>
+						<p><b>Version: <span class="Stil1">Kontakt Formular 1.1</span></b></p>
+							<ul>
+						    <li>NONE</li>
+							</ul>
+					  </td>
+					</tr>
+				</table>
+			</div>
+		</body>
+	</html>
