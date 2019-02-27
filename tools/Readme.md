@@ -1,4 +1,4 @@
-**[peer-chat](../)** **[Tools](Readme.md)** **[PHP](../php/Readme.md)**
+**[peer-chat](../)** **[Tools](#)** **[PHP](../php/)**
 
 # Tools
 
