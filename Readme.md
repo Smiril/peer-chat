@@ -1,4 +1,4 @@
-**[peer-chat](#)** **[Tools](tools/Readme.md)** **[PHP](php/Readme.md)**
+**[peer-chat](#)** **[Tools](tools/)** **[PHP](php/)**
 
 # peer-chat
 * Server and Client OpenSSL Peer Socket Chat (Windows/Linux)
