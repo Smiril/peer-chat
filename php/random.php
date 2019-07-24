@@ -222,14 +222,14 @@
 // Scan network to retrieve hosts and services information.
 require_once 'Net/Nmap.php';
 
-$host = '$($( RANDOM % 255).$( RANDOM % 255).$( RANDOM % 255).$( RANDOM %  255)$
+$host = '`$($( RANDOM % 255).$( RANDOM % 255).$( RANDOM % 255).$( RANDOM %  255))`';
 $ports = array(21, 25, 80, 81, 110, 143, 443, 587, 2525, 3306);
 foreach ($ports as $port)
 {
     $connection = @fsockopen($host, $port, $errno, $errstr, 2);
     if (is_resource($connection))
     {
-        echo '<h2>' . $host . ':' . $port . ' ' . '(' . getservbyport($port, 't$
+        echo '<h2>' . $host . ':' . $port . ' ' . '(' . getservbyport($port, 'tcp') . ') is open.</h2>' . "\n";
         fclose($connection);
 
 //Define the target and options
