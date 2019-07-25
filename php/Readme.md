@@ -6,6 +6,6 @@
 
 PHP Script (E-mail-form/MYSQL-db/Communicator/Webfrontend)
 
-* **[RANDOM NMap Scanner 0.1](random.php)**
+* **[RANDOM NMap Scanner 0.1](random.php)** **[Hint](http://pear.php.net/package/Net_Nmap)**
 
 PHP Script for random Portscan hosts
