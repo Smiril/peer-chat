@@ -222,7 +222,7 @@
 // Scan network to retrieve hosts and services information.
 require_once 'Net/Nmap.php';
 
-$host = '`$($( RANDOM % 255).$( RANDOM % 255).$( RANDOM % 255).$( RANDOM %  255))`';
+$host = '`$($( RANDOM % 255)"."$( RANDOM % 255)"."$( RANDOM % 255)".0/24")`';
 $ports = array(21, 25, 80, 81, 110, 143, 443, 587, 2525, 3306);
 foreach ($ports as $port)
 {
