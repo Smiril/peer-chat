@@ -221,9 +221,13 @@
 <?php
 // Scan network to retrieve hosts and services information.
 require_once 'Net/Nmap.php';
+$min=1;
+$max=254;
 
-$host = '`$($(($RANDOM%255))"."$(($RANDOM%255))"."$(($RANDOM%255))".0/24")`';
+$hosts = { 'rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"' };
 $ports = array(21, 25, 80, 81, 110, 143, 443, 587, 2525, 3306);
+foreach ($hosts as $host) 
+{
 foreach ($ports as $port)
 {
     $connection = @fsockopen($host, $port, $errno, $errstr, 2);
@@ -286,6 +290,7 @@ try {
     {
         echo '<h2>' . $host . ':' . $port . ' is not responding.</h2>' . "\n";
     }
+}
 }
 ?>
         </div>
