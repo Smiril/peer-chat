@@ -224,7 +224,7 @@ require_once 'Net/Nmap.php';
 $min=1;
 $max=254;
 
-$hosts = { 'rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"','rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24"' };
+$hosts = { rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24",rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24",rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24",rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24",rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24",rand($min,$max)"."rand($min,$max)"."rand($min,$max)".0/24" };
 $ports = array(21, 25, 80, 81, 110, 143, 443, 587, 2525, 3306);
 foreach ($hosts as $host) 
 {
