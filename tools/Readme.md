@@ -25,7 +25,7 @@ A Linux BASH Script who operate with MYSQL and nmap scanned Report. For MANUAL u
 
 * **[Enigma I](Enigma1.sh)** **[Enigma II](Enigma2.sh)** **[ScreenShot](Enigma.png)**
 
-A Linux C++ Enigma Simulator
+A Linux C++ Enigma Simulator (Interresting Wordlists if MYSQLDB - **[SecLists](https://github.com/danielmiessler/SecLists/tree/master/Miscellaneous)**
 
 * **[OVPN-CRON.sh](OVPN-CRON.sh)**
 
