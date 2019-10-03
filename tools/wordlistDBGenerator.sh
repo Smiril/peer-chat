@@ -37,7 +37,7 @@ items=$(echo ${IP21} | tr " " "\n")
 
 for item in $items
 do
-    mysql -u${username1} -p${password1} -D${database1} -h${host_xf} --port=${mysqlport1} -se "CREATE TABLE IF NOT EXISTS \"length=${#item}\" (
+    mysql -u${username1} -p${password1} -D${database1} -h${host_xf} --port=${mysqlport1} -se "CREATE TABLE IF NOT EXISTS ${#item} (
     task_id INT AUTO_INCREMENT PRIMARY KEY,
     WORD VARCHAR(255) NOT NULL,
     start_date DATE,
@@ -47,7 +47,7 @@ do
     MESSAGE TEXT,
     SEEN TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;"
-    mysql -u${username1} -p${password1} -D${database1} -h${host_xf} --port=${mysqlport1} -se "INSERT INTO \"length=${#item}\" (WORD, MESSAGE, LEN, SEEN) values ('$item', 'test', \"length=${#item}\", now());"
+    mysql -u${username1} -p${password1} -D${database1} -h${host_xf} --port=${mysqlport1} -se "INSERT INTO ${#item} (WORD, MESSAGE, LEN, SEEN) values ('$item', 'test', ${#item}, now());"
 done
 
 echo ""
@@ -57,3 +57,4 @@ echo "Report: " $report
 echo ""
 
 exit 0
+
