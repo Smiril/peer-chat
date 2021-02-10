@@ -14,8 +14,8 @@ done
 echo ""
 while true; do
     echo "Scanning ..."
-    sudo iwlist wlo1 scanning | grep "Address" | awk '{print $5}' && sudo iwlist wlo1 scanning | grep "ESSID:" | awk '{print $1}'
-    NUMOFLINES=$(sudo iwlist wlo1 scanning | grep "Address" | awk '{print $5}' && sudo iwlist wlo1 scanning | grep "ESSID:" | awk '{print $1}')
+    sudo iwlist wlan0 scanning | grep "Address" | awk '{print $5}' && sudo iwlist wlan0 scanning | grep "ESSID:" | awk '{print $1}'
+    NUMOFLINES=$(sudo iwlist wlan0 scanning | grep "Address" | awk '{print $5}' && sudo iwlist wlan0 scanning | grep "ESSID:" | awk '{print $1}')
 		for j in $NUMOFLINES ; do
     sleep 1
 	done
