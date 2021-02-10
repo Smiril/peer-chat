@@ -33,5 +33,9 @@ Some OpenVPN Client dealings with CRON and BASH Script
 
 * **[SHA1-BF.sh](SHA1-BF.sh)** **[README](https://github.com/smoes/SHA1-CUDA-bruteforce/)**
 
+* **[wifi.sh](Wifi.sh)**
+
+Some tiny wifi scanner script
+
 SHA1 Bruteforce chars with Nvidia CUDA GPU Calculating function.
 
