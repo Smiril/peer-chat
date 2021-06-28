@@ -23,6 +23,10 @@ A Linux BASH Script who operate with MYSQL and nmap PortScanner. For CRON usage.
 
 A Linux BASH Script who operate with MYSQL and nmap scanned Report. For MANUAL usage.
 
+* **[purplecryppt-1.0_i386.deb](purplecrypt-1.0_i386.deb)**
+
+A Simple XOR Crypter demonstration
+
 * **[Enigma](enigma.png)** **[ScreenShot](enigma.png)**
 
 A Linux C++ Enigma Simulator (Interresting Wordlists if MYSQLDB - **[SecLists](https://github.com/danielmiessler/SecLists/tree/master/Miscellaneous)** **[WordListDBGenerator.sh](wordlistDBGenerator.sh)** )
