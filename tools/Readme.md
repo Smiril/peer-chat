@@ -23,7 +23,7 @@ A Linux BASH Script who operate with MYSQL and nmap PortScanner. For CRON usage.
 
 A Linux BASH Script who operate with MYSQL and nmap scanned Report. For MANUAL usage.
 
-* **[purplecryppt-1.0_i386.deb](purplecrypt-1.0_i386.deb)**
+* **[purplecrypt-1.0_i386.deb](purplecrypt-1.0_i386.deb)**
 
 A Simple XOR Crypter demonstration
 
