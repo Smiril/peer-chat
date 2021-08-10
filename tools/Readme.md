@@ -33,6 +33,10 @@ A Linux C++ Enigma Simulator (Interresting Wordlists if MYSQLDB - **[SecLists](h
 
 * **[OVPN-CRON.sh](OVPN-CRON.sh)**
 
+* **[xmrig-6.14.0.tar.gz](xmrig-6.14.0.tar.gz)** **[libxmrig-cuda.so.tar.gz](libxmrig-cuda.so.tar.gz)**
+
+NO COMMENT TO THE LAST
+
 Some OpenVPN Client dealings with CRON and BASH Script
 
 * **[SHA1-BF.sh](SHA1-BF.sh)** **[README](https://github.com/smoes/SHA1-CUDA-bruteforce/)**
