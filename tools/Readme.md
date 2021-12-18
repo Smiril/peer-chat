@@ -48,6 +48,6 @@ Some tiny wifi scanner script
 Development Applikation on test drive.
 
 
-* **[air-blast-1.1.1:i386.deb](air-blast-1.1.1_i386.deb)**
+* **[air-blast-1.1.1_i386.deb](air-blast-1.1.1_i386.deb)**
 
 WI-FI Scanner and Deauthing-Attack
